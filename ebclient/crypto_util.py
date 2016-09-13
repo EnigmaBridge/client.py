@@ -221,13 +221,38 @@ class PKCS7(Padding):
 class PKCS15(Padding):
     @staticmethod
     def unpad(data, *args, **kwargs):
-        #TODO: implement
-        pass
+        bs = kwargs.get('bs', 256 if len(args) == 0 else args[0])
+        bt = kwargs.get('bt', 2 if len(args) <= 1 else args[1])
+
+        prefix = b("\x00") + bchr(bt)
+        if data[0:2] != prefix:
+            raise ValueError('Padding error')
+
+        # Not needed in the client
+        raise NotImplementedError()
 
     @staticmethod
     def pad(data, *args, **kwargs):
-        #TODO: implement
-        pass
+        bs = kwargs.get('bs', 256 if len(args) == 0 else args[0])
+        bt = kwargs.get('bt', 2 if len(args) <= 1 else args[1])
+
+        data = to_bytes(data)
+        blb = len(data)
+        if blb+3 > bs:
+            raise ValueError('Input data too long')
+
+        ps_len = bs - 3 - blb
+        padding_str = bchr(0x00) # tmp
+        if bt == 0:
+            padding_str = bchr(0x00) * ps_len
+        elif bt == 1:
+            padding_str = bchr(0xFF) * ps_len
+        elif bt == 2:
+            padding_str = to_bytes([int(get_random_range(1, 0x100)) for _ in range (10)])
+        else:
+            raise ValueError('Unknown padding type')
+
+        return b("\x00") + bchr(bt) + padding_str + b("\x00") + data
 
 
 #
