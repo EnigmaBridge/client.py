@@ -33,7 +33,7 @@ def to_bytes(x, blocksize=0):
     :return:
     """
     if isinstance(x, bytearray):
-        return left_zero_pad(x.decode('ascii'), blocksize)
+        return left_zero_pad(''.join([bchr(y) for y in x]), blocksize)
     elif isinstance(x, basestring):
         return left_zero_pad(x, blocksize)
     elif isinstance(x, (list, tuple)):
