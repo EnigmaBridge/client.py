@@ -6,13 +6,13 @@ generating random numbers, encryption, decryption, padding, etc...
 For now we use PyCrypto, later we may use pure python implementations to minimize dependency count.
 """
 
-import abc
 import logging
 import os
 import base64
 
 from Crypto import Random
 from Crypto.Cipher import AES
+from Crypto.Util.py3compat import *
 
 # Logging if needed
 logger = logging.getLogger(__name__)
@@ -79,6 +79,7 @@ def getZeroVector(numBytes):
     """
     return bytearray([0] * numBytes).decode('ascii')
 
+
 #
 # Randomness
 #
@@ -87,6 +88,7 @@ def getZeroVector(numBytes):
 def getRandomVector(numBytes):
     #return Random.get_random_bytes(numBytes)
     return os.urandom(numBytes)
+
 
 #
 # Padding
@@ -97,8 +99,8 @@ class Padding(object):
     """
     Basic Padding methods
     """
-    @abc.abstractmethod
-    def pad(self, data, *args, **kwargs):  # pragma: no cover
+    @staticmethod
+    def pad(data, *args, **kwargs):  # pragma: no cover
         """Pads data with given padding.
 
         :returns: Padded data.
@@ -107,7 +109,8 @@ class Padding(object):
         """
         raise NotImplementedError()
 
-    def unpad(self, data, *args, **kwargs):  # pragma: no cover
+    @staticmethod
+    def unpad(data, *args, **kwargs):  # pragma: no cover
         """UnPads data with given padding.
 
         :returns: unpaded data
@@ -117,21 +120,35 @@ class Padding(object):
         raise NotImplementedError()
 
 
+class EmptyPadding(Padding):
+    @staticmethod
+    def unpad(data, *args, **kwargs):
+        return data
+
+    @staticmethod
+    def pad(data, *args, **kwargs):
+        return data
+
+
 class PKCS7(Padding):
-    def unpad(self, data, *args, **kwargs):
+    @staticmethod
+    def unpad(data, *args, **kwargs):
         return data[:-ord(data[len(data)-1:])]
 
-    def pad(self, data, *args, **kwargs):
+    @staticmethod
+    def pad(data, *args, **kwargs):
         bs = kwargs.get('bs', 16)
         return data + (bs - len(data) % bs) * chr(bs - len(data) % bs)
 
 
 class PKCS15(Padding):
-    def unpad(self, data, *args, **kwargs):
+    @staticmethod
+    def unpad(data, *args, **kwargs):
         #TODO: implement
         pass
 
-    def pad(self, data, *args, **kwargs):
+    @staticmethod
+    def pad(data, *args, **kwargs):
         #TODO: implement
         pass
 
@@ -140,7 +157,55 @@ class PKCS15(Padding):
 # Encryption
 #
 
+def aesCbc(key):
+    """
+    Returns AES-CBC instance that can be used for [incremental] encryption/decryption in ProcessData.
+    Uses zero IV.
 
+    :param key:
+    :return:
+    """
+    return AES.new(key, AES.MODE_CBC, getZeroVector(16))
+
+
+def aes(encrypt, key, data):
+    """
+    One-pass AES-256-CBC used in ProcessData. Zero IV (don't panic, IV-like random nonce is included in plaintext in the
+    first block in ProcessData).
+
+    Does not use padding (data has to be already padded).
+
+    :param encrypt:
+    :param key:
+    :param data:
+    :return:
+    """
+    cipher = AES.new(key, AES.MODE_CBC, getZeroVector(16))
+    if encrypt:
+        return cipher.encrypt(data)
+    else:
+        return cipher.decrypt(data)
+
+
+def aesEnc(key, data):
+    return aes(True, key, data)
+
+
+def aesDec(key, data):
+    return aes(False, key, data)
+
+
+def mac(key, data):
+    """
+    AES-265-CBC-MAC on the data used in ProcessData.
+    Does not use padding (data has to be already padded).
+
+    :param key:
+    :param data:
+    :return:
+    """
+    engine = AES.new(key, AES.MODE_CBC, getZeroVector(16))
+    return engine.encrypt(data)[-16:]
 
 
 
