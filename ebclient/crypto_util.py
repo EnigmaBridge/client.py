@@ -129,6 +129,44 @@ def get_random_vector(numBytes):
     return os.urandom(numBytes)
 
 
+def get_random_integer(N, randfunc=None):
+    """getRandomInteger(N:int, randfunc:callable):long
+    Return a random number with at most N bits.
+
+    If randfunc is omitted, then Random.new().read is used.
+
+    This function is for internal use only and may be renamed or removed in
+    the future.
+    """
+    if randfunc is None:
+        randfunc = Random.new().read
+
+    S = randfunc(N>>3)
+    odd_bits = N % 8
+    if odd_bits != 0:
+        char = ord(randfunc(1)) >> (8-odd_bits)
+        S = bchr(char) + S
+    value = bytes_to_long(S)
+    return value
+
+
+def get_random_range(a, b, randfunc=None):
+    """getRandomRange(a:int, b:int, randfunc:callable):long
+    Return a random number n so that a <= n < b.
+
+    If randfunc is omitted, then Random.new().read is used.
+
+    This function is for internal use only and may be renamed or removed in
+    the future.
+    """
+    range_ = b - a - 1
+    bits = size(range_)
+    value = get_random_integer(bits, randfunc)
+    while value > range_:
+        value = get_random_integer(bits, randfunc)
+    return a + value
+
+
 #
 # Padding
 #
