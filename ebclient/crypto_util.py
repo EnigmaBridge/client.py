@@ -9,10 +9,12 @@ For now we use PyCrypto, later we may use pure python implementations to minimiz
 import logging
 import os
 import base64
+import types
 
 from Crypto import Random
 from Crypto.Cipher import AES
 from Crypto.Util.py3compat import *
+from Crypto.Util.number import long_to_bytes, bytes_to_long, size, ceil_div
 
 # Logging if needed
 logger = logging.getLogger(__name__)
@@ -22,7 +24,7 @@ logger = logging.getLogger(__name__)
 #
 
 
-def toBytes(x):
+def to_bytes(x):
     """
     Converts input to a byte string.
     Typically used in PyCrypto as an argument (e.g., key, iv)
@@ -36,11 +38,27 @@ def toBytes(x):
         return x
     elif isinstance(x, (list, tuple)):
         return bytearray(x).decode('ascii')
+    elif isinstance(x, types.LongType):
+        return long_to_bytes(x)
     else:
         raise ValueError('Unknown input argument type')
 
 
-def toByteArr(x):
+def to_long(x):
+    """
+    Converts input to a long number (arbitrary precision python long)
+    :param x:
+    :return:
+    """
+    if isinstance(x, types.LongType):
+        return x
+    elif isinstance(x, types.IntType):
+        return long(x)
+    else:
+        return bytes_to_long(to_bytes(x))
+
+
+def to_bytearray(x):
     """
     Converts input to byte array.
     If already a byte array, return directly.
@@ -54,7 +72,7 @@ def toByteArr(x):
         return bytearray(x)
 
 
-def toHex(x):
+def to_hex(x):
     """
     Converts input to the hex string
     :param x:
@@ -70,7 +88,15 @@ def toHex(x):
         raise ValueError('Unknown input argument type')
 
 
-def getZeroVector(numBytes):
+def long_bit_size(x):
+    return size(x)
+
+
+def long_byte_size(x):
+    return ceil_div(long_bit_size(x), 8)
+
+
+def get_zero_vector(numBytes):
     """
     Generates a zero vector of a given size
 
@@ -85,7 +111,7 @@ def getZeroVector(numBytes):
 #
 
 
-def getRandomVector(numBytes):
+def get_random_vector(numBytes):
     #return Random.get_random_bytes(numBytes)
     return os.urandom(numBytes)
 
@@ -157,7 +183,7 @@ class PKCS15(Padding):
 # Encryption
 #
 
-def aesCbc(key):
+def aes_cbc(key):
     """
     Returns AES-CBC instance that can be used for [incremental] encryption/decryption in ProcessData.
     Uses zero IV.
@@ -165,7 +191,7 @@ def aesCbc(key):
     :param key:
     :return:
     """
-    return AES.new(key, AES.MODE_CBC, getZeroVector(16))
+    return AES.new(key, AES.MODE_CBC, get_zero_vector(16))
 
 
 def aes(encrypt, key, data):
@@ -180,18 +206,18 @@ def aes(encrypt, key, data):
     :param data:
     :return:
     """
-    cipher = AES.new(key, AES.MODE_CBC, getZeroVector(16))
+    cipher = AES.new(key, AES.MODE_CBC, get_zero_vector(16))
     if encrypt:
         return cipher.encrypt(data)
     else:
         return cipher.decrypt(data)
 
 
-def aesEnc(key, data):
+def aes_enc(key, data):
     return aes(True, key, data)
 
 
-def aesDec(key, data):
+def aes_dec(key, data):
     return aes(False, key, data)
 
 
@@ -204,8 +230,23 @@ def mac(key, data):
     :param data:
     :return:
     """
-    engine = AES.new(key, AES.MODE_CBC, getZeroVector(16))
+    engine = AES.new(key, AES.MODE_CBC, get_zero_vector(16))
     return engine.encrypt(data)[-16:]
 
 
+def rsa_enc(data, modulus, exponent):
+    """
+    Simple RAW RSA encryption method, returns byte string.
+    Returns byte string of the same size as the modulus (left padded with 0)
+
+    :param data:
+    :param modulus:
+    :param exponent:
+    :return:
+    """
+    modulus = to_long(modulus)
+    exponent = to_long(exponent)
+    data = to_long(data)
+
+    return long_to_bytes(pow(data, exponent, modulus), long_byte_size(modulus))
 
