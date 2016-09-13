@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 #
 
 
-def to_bytes(x):
+def to_bytes(x, blocksize=0):
     """
     Converts input to a byte string.
     Typically used in PyCrypto as an argument (e.g., key, iv)
@@ -33,13 +33,13 @@ def to_bytes(x):
     :return:
     """
     if isinstance(x, bytearray):
-        return x.decode('ascii')
+        return left_zero_pad(x.decode('ascii'), blocksize)
     elif isinstance(x, basestring):
-        return x
+        return left_zero_pad(x, blocksize)
     elif isinstance(x, (list, tuple)):
-        return bytearray(x).decode('ascii')
-    elif isinstance(x, types.LongType):
-        return long_to_bytes(x)
+        return left_zero_pad(''.join([bchr(y) for y in bytearray(x)]), blocksize)
+    elif isinstance(x, (types.LongType, types.IntType)):
+        return long_to_bytes(x, blocksize)
     else:
         raise ValueError('Unknown input argument type')
 
@@ -104,6 +104,19 @@ def get_zero_vector(numBytes):
     :return:
     """
     return bytearray([0] * numBytes).decode('ascii')
+
+
+def left_zero_pad(s, blocksize):
+    """
+    Left padding with zero bytes to a given block size
+
+    :param s:
+    :param blocksize:
+    :return:
+    """
+    if blocksize > 0 and len(s) % blocksize:
+        s = (blocksize - len(s) % blocksize) * b('\000') + s
+    return s
 
 
 #
