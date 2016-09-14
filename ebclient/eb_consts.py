@@ -40,6 +40,14 @@ class EBConsts(object):
     INVALID_KEY_TYPE = -1
     FRESHNESS_NONCE_LEN = 8
 
+    STATUS_OK = 0x9000
+
+    METHOD_REST = 'REST'
+    METHOD_SOCKET = 'SOCKET'
+
+    HTTP_METHOD_GET = 'GET'
+    HTTP_METHOD_POST = 'POST'
+
     REQUEST_TYPES = {
         UOTypes.HMAC: 'HMAC',
         UOTypes.SCRAMBLE: 'SCRAMBLE',
@@ -61,4 +69,6 @@ class EBConsts(object):
         UOTypes.RSA1024ENCRYPT_NOPAD: 'RSA1024ENCRYPT_NOPAD',
         UOTypes.RSA2048ENCRYPT_NOPAD: 'RSA2048ENCRYPT_NOPAD'
     }
+
+
 
