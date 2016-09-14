@@ -297,7 +297,7 @@ def aes_dec(key, data):
     return aes(False, key, data)
 
 
-def mac(key, data):
+def cbc_mac(key, data):
     """
     AES-265-CBC-MAC on the data used in ProcessData.
     Does not use padding (data has to be already padded).
