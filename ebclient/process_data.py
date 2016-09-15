@@ -22,8 +22,21 @@ class ProcessData(object):
         # Request & response
         self.request = None
         self.response = None
+
         self.decrypted = None
-        self.nonce = None
+        self.resp_nonce = None
+        self.resp_object_id = None
+
+    def call_request(self, input_data=None, *args, **kwargs):
+        """
+        Calls the request with input data using given ocnfiguration (retry, timeout, ...).
+        :param input_data:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        # TODO: Implement
+        pass
 
     def build_request(self, input_data=None, *args, **kwargs):
         """
@@ -48,7 +61,7 @@ class ProcessData(object):
 
         # Build plaintext buffer
         buffer = "\x1f%s%s%s" % (to_bytes(self.uo.uo_id, 4),
-                                 to_bytes(self.nonce, EBConsts.FRESHNESS_NONCE_LEN),
+                                 to_bytes(self.request.nonce, EBConsts.FRESHNESS_NONCE_LEN),
                                  to_bytes(self.input_data))
 
         # Encrypt-then-mac
@@ -106,9 +119,8 @@ class ProcessData(object):
         if len(decrypted) < 1+4+8 or decrypted[0:1] != bchr(0xf1):
             raise InvalidResponse('Invalid format')
 
-        self.response.object_id = bytes_to_long(decrypted[1:5])
-        self.response.nonce = EBUtils.demangle_nonce(decrypted[5:5+EBConsts.FRESHNESS_NONCE_LEN])
-        self.response.decrypted = decrypted[5+EBConsts.FRESHNESS_NONCE_LEN:]
-        self.decrypted = self.response.decrypted
+        self.resp_object_id = bytes_to_long(decrypted[1:5])
+        self.resp_nonce = EBUtils.demangle_nonce(decrypted[5:5+EBConsts.FRESHNESS_NONCE_LEN])
+        self.decrypted = decrypted[5+EBConsts.FRESHNESS_NONCE_LEN:]
         return self.response
 

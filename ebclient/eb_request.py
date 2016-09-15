@@ -11,6 +11,9 @@ logger = logging.getLogger(__name__)
 
 
 class RequestHolder(object):
+    """
+    Class holding the general request
+    """
     def __init__(self, body=None, api_object=None, nonce=None, endpoint=None, config=None, *args, **kwargs):
         self.body = body
         self.api_object = api_object
@@ -21,13 +24,12 @@ class RequestHolder(object):
 
 
 class ResponseHolder(object):
+    """
+    Class holding the general response
+    """
     def __init__(self, *args, **kwargs):
         self.response = None
-
         self.status = 0x0
-        self.object_id = -1
-        self.nonce = None
-        self.decrypted = None
         pass
     pass
 
