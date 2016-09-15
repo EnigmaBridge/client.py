@@ -88,6 +88,15 @@ def to_hex(x):
         raise ValueError('Unknown input argument type')
 
 
+def from_hex(x):
+    """
+    Converts hex-coded (b16 encoding) string to the byte string.
+    :param x:
+    :return:
+    """
+    return base64.b16decode(x, True)
+
+
 def long_bit_size(x):
     return size(x)
 
@@ -117,6 +126,21 @@ def left_zero_pad(s, blocksize):
     if blocksize > 0 and len(s) % blocksize:
         s = (blocksize - len(s) % blocksize) * b('\000') + s
     return s
+
+
+def str_equals(a, b):
+    """
+    Constant time string equals method - no time leakage
+    :param a:
+    :param b:
+    :return:
+    """
+    al = len(a)
+    bl = len(b)
+    match = True
+    for i in xrange(0, min(al, bl)):
+        match &= a[i] == b[i]
+    return match
 
 
 #

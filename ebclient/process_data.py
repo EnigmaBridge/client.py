@@ -4,6 +4,7 @@ from eb_consts import EBConsts
 from eb_request import *
 from uo import *
 from crypto_util import *
+from errors import *
 
 __author__ = 'dusanklinec'
 
@@ -67,6 +68,42 @@ class ProcessData(object):
         :param kwargs:
         :return:
         """
-        # TODO: implement...
-        return 0
+        res_hex = self.response.response['result']
+
+        # Strip out the plaintext part
+        plain_length = bytes_to_long(from_hex(res_hex[0:4]))
+        if plain_length > 0:
+            res_hex = res_hex[4+plain_length:]
+        else:
+            res_hex = res_hex[4:]
+
+        # Optionally strip trailing _... string
+        idx_trail = res_hex.find('_')
+        if idx_trail != -1:
+            res_hex = res_hex[0:idx_trail]
+
+        # Decode hex coding
+        res_bytes = from_hex(res_hex)
+
+        # Crypto stuff - check the length & padding
+        if len(res_bytes) < 16:
+            raise InvalidResponse('Result too short')
+
+        mac_given = res_bytes[-16:]
+        res_bytes = res_bytes[:-16]
+
+        # Check the MAC
+        mac_computed = cbc_mac(self.uo.mac_key, res_bytes)
+        if not str_equals(mac_given, mac_computed):
+            raise CryptoError('MAC invalid')
+
+        # Decrypt
+        decrypted = aes_dec(self.uo.enc_key, res_bytes)
+        if len(decrypted) < 1+4+8 or decrypted[0:1] != bchr(0xf1):
+            raise InvalidResponse('Invalid format')
+
+        self.response.object_id = bytes_to_long(decrypted[1:5])
+        self.response.nonce = EBUtils.demangle_nonce(decrypted[5:5+8])
+        self.response.decrypted = decrypted[5+8:]
+        return self.response
 

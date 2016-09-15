@@ -69,4 +69,14 @@ class EBUtils(object):
             uo_type = type.uo_type
         return EBConsts.REQUEST_TYPES.get(uo_type, 'PROCESS')
 
+    @staticmethod
+    def demangle_nonce(nonce):
+        """
+        Demangles nonce returned in process data response
+        :param nonce:
+        :return:
+        """
+        return [chr((ord(y)-1) & 0xff) for y in nonce]
+
+
 

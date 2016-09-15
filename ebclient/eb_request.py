@@ -22,9 +22,12 @@ class RequestHolder(object):
 
 class ResponseHolder(object):
     def __init__(self, *args, **kwargs):
+        self.response = None
+
         self.status = 0x0
-        self.json = None
-        self.result = None
+        self.object_id = -1
+        self.nonce = None
+        self.decrypted = None
         pass
     pass
 
