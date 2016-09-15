@@ -13,17 +13,17 @@ logger = logging.getLogger(__name__)
 
 
 class ProcessData(object):
-    def __init__(self, uo=None, input_data=None, nonce=None, request_type=None, config=None, *args, **kwargs):
+    def __init__(self, uo=None, input_data=None, request_type=None, config=None, *args, **kwargs):
         self.uo = uo
         self.input_data = input_data
-        self.nonce = nonce
         self.request_type = request_type
         self.configuration = config
 
         # Request & response
-        self.request = RequestHolder()
-        self.response = ResponseHolder()
+        self.request = None
+        self.response = None
         self.decrypted = None
+        self.nonce = None
 
     def build_request(self, input_data=None, *args, **kwargs):
         """
@@ -41,9 +41,8 @@ class ProcessData(object):
         if self.uo is None:
             raise ValueError('UO is None')
 
-        if self.nonce is None:
-            self.nonce = get_random_vector(EBConsts.FRESHNESS_NONCE_LEN)
-        self.request.nonce = self.nonce
+        self.request = RequestHolder()
+        self.request.nonce = get_random_vector(EBConsts.FRESHNESS_NONCE_LEN)
         self.request.api_object = EBUtils.build_api_object(self.uo)
         self.request.configuration = self.configuration
 
@@ -68,6 +67,11 @@ class ProcessData(object):
         :param kwargs:
         :return:
         """
+        if self.response is None:
+            raise ValueError('Empty response')
+        if self.response.response is None or self.response.response['result'] is None:
+            raise ValueError('No result data')
+
         res_hex = self.response.response['result']
 
         # Strip out the plaintext part
@@ -103,7 +107,8 @@ class ProcessData(object):
             raise InvalidResponse('Invalid format')
 
         self.response.object_id = bytes_to_long(decrypted[1:5])
-        self.response.nonce = EBUtils.demangle_nonce(decrypted[5:5+8])
-        self.response.decrypted = decrypted[5+8:]
+        self.response.nonce = EBUtils.demangle_nonce(decrypted[5:5+EBConsts.FRESHNESS_NONCE_LEN])
+        self.response.decrypted = decrypted[5+EBConsts.FRESHNESS_NONCE_LEN:]
+        self.decrypted = self.response.decrypted
         return self.response
 
