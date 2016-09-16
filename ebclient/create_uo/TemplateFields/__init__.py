@@ -7,3 +7,6 @@ appkey = "appkey"
 
 yes = "yes"
 no = "no"
+
+FLAG_APP_GEN = 21
+FLAG_COMM_GEN = 20

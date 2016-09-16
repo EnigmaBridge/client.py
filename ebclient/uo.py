@@ -78,6 +78,7 @@ class Configuration(object):
         self.method = EBConsts.METHOD_REST
         self.timeout = 90000
         self.retry = None
+        self.create_tpl = {} # CreateUO template
 
 
 class UO(object):

@@ -1,6 +1,7 @@
 import logging
 import types
 from eb_consts import EBConsts
+from ebclient.crypto_util import *
 from uo import UO
 
 __author__ = 'dusanklinec'
@@ -70,6 +71,14 @@ class EBUtils(object):
         return EBConsts.REQUEST_TYPES.get(uo_type, 'PROCESS')
 
     @staticmethod
+    def generate_nonce():
+        """
+        Generates a random nonce of the standard length for EB API requests
+        :return:
+        """
+        return get_random_vector(EBConsts.FRESHNESS_NONCE_LEN)
+
+    @staticmethod
     def demangle_nonce(nonce):
         """
         Demangles nonce returned in process data response
@@ -78,5 +87,26 @@ class EBUtils(object):
         """
         return [chr((ord(y)-1) & 0xff) for y in nonce]
 
+    @staticmethod
+    def merge(a, b, path=None):
+        """
+        Deep merges dictionary object b into a.
+        :param a:
+        :param b:
+        :return:
+        """
+        if a is None: return None
+        if b is None: return a
 
-
+        if path is None: path = []
+        for key in b:
+            if key in a:
+                if isinstance(a[key], dict) and isinstance(b[key], dict):
+                    EBUtils.merge(a[key], b[key], path + [str(key)])
+                elif a[key] == b[key]:
+                    pass # same leaf value
+                else:
+                    raise ValueError('Conflict at %s' % '.'.join(path + [str(key)]))
+            else:
+                a[key] = b[key]
+        return a
