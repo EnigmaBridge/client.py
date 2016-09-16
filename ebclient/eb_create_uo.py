@@ -75,7 +75,7 @@ class CreateUO:
         uo = self.create_uo(configuration=self.configuration, tpl=self.tpl, keys=self.keys)
 
         # Process public key part from the response.
-        n, e = TemplateProcessor.read_serialized_rsa_pub_key(self.import_resp['result']['publickey'])
+        n, e = TemplateProcessor.read_serialized_rsa_pub_key(self.import_resp.response['result']['publickey'])
         return RSAPrivateKey(uo=uo, n=n, e=e)
 
     @staticmethod
@@ -245,26 +245,27 @@ class CreateUO:
         Builds uo from the imported object
         """
         if import_resp is None \
-            or 'result' not in import_resp \
-            or 'handle' not in import_resp['result']:
+            or import_resp.response is None \
+            or 'result' not in import_resp.response \
+            or 'handle' not in import_resp.response['result']:
             logger.info('Invalid result: %s', import_resp)
             raise InvalidResponse('Invalid import result')
 
         # TEST_API00000022480000300004
-        handle = import_resp['result']['handle']
+        handle = import_resp.response['result']['handle']
         handle_len = len(handle)
 
         api_key     = handle[0:                   handle_len-10-10]
         uo_id_str   = handle[handle_len-10-10+2:  handle_len-10]
         uo_type_str = handle[handle_len-10+2:]
 
-        uo_id = bytes_to_long(uo_id_str)
-        uo_type = bytes_to_long(uo_type_str)
+        uo_id = bytes_to_long(from_hex(uo_id_str))
+        uo_type = bytes_to_long(from_hex(uo_type_str))
 
         uo = UO(uo_id=uo_id,
                 uo_type=uo_type,
-                enc_key=tpl_import_req.keys[KeyTypes.COMM_ENC],
-                mac_key=tpl_import_req.keys[KeyTypes.COMM_MAC])
+                enc_key=tpl_import_req.keys[KeyTypes.COMM_ENC].key,
+                mac_key=tpl_import_req.keys[KeyTypes.COMM_MAC].key)
 
         uo.configuration = configuration
 
