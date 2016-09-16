@@ -113,6 +113,8 @@ class CreateUO:
         elif app_keys_provided:
             obj_type |= (1L << TemplateFields.FLAG_APP_GEN)
 
+        return obj_type
+
     @staticmethod
     def get_rsa_type(bitsize):
         if bitsize == 1024:

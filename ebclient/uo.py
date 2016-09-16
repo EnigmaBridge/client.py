@@ -108,3 +108,13 @@ class UO(object):
         else:
             return None
 
+
+class RSAPrivateKey(object):
+    """
+    Contains UO and RSA modulus and exponent
+    """
+    def __init__(self, uo=None, n=None, e=None, *args, **kwargs):
+        self.uo = uo
+        self.n = n
+        self.e = e
+
