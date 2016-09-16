@@ -10,6 +10,7 @@ import logging
 import os
 import base64
 import types
+import struct
 
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -167,6 +168,13 @@ def bytes_transform(byte_str, start_idx, stop_idx, fction):
     """
     return bytes_replace(byte_str, start_idx, stop_idx, fction(byte_str[start_idx:stop_idx]))
 
+
+def bytes_to_short(byte, offset=0):
+    return struct.unpack('>H', byte[offset:offset+2])[0]
+
+
+def short_to_bytes(short):
+    return struct.pack('>H', int(short))
 
 #
 # Randomness
