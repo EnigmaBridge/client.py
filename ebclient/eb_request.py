@@ -53,7 +53,7 @@ class RequestCall(object):
         Calls multiple time - with retry.
 
         :param request:
-        :return:
+        :return: response
         """
         if request is not None:
             self.request = request
@@ -66,7 +66,7 @@ class RequestCall(object):
         for i in range(0, retry.maxRetry):
             try:
                 self.call_once()
-                return
+                return self.response
 
             except Exception as ex:
                 last_exception = ex
@@ -82,7 +82,7 @@ class RequestCall(object):
         :param request:
         :param args:
         :param kwargs:
-        :return:
+        :return: response
         """
         if request is not None:
             self.request = request
@@ -118,6 +118,8 @@ class RequestCall(object):
             self.response.status = from_hex(json['status'])
             if self.response.status != EBConsts.STATUS_OK:
                 raise InvalidStatus('Status is %s' % json['statusdetail'])
+
+            return self.response
 
         else:
             # If response code is not ok (200), print the resulting http error code with description
