@@ -51,7 +51,7 @@ class EBUtils(object):
             uo_id = uo.uo_id if uo.uo_id is not None else uo_id
             uo_type = uo.uo_type if uo.uo_type is not None else uo_type
 
-        if uo_type != EBConsts.INVALID_KEY_TYPE:
+        if uo_type is not None and uo_type != EBConsts.INVALID_KEY_TYPE:
             return "%s%010x%010x" % (api_key, uo_id, uo_type)
         else:
             return "%s%010x" % (api_key, uo_id)
