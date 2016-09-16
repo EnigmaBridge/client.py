@@ -72,13 +72,14 @@ class ProcessData(object):
         self.request.configuration = self.configuration
         self.request.api_method = EBConsts.REQUEST_PROCESS_DATA
 
-        # Build plaintext buffer
-        buffer = "\x1f%s%s%s" % (to_bytes(self.uo.uo_id, 4),
-                                 to_bytes(self.request.nonce, EBConsts.FRESHNESS_NONCE_LEN),
-                                 to_bytes(self.input_data))
+        # Build plaintext plain_buffer
+        plain_buffer = "\x1f%s%s%s" % (to_bytes(self.uo.uo_id, 4),
+                                       to_bytes(self.request.nonce, EBConsts.FRESHNESS_NONCE_LEN),
+                                       to_bytes(self.input_data))
+        plain_buffer = PKCS7.pad(plain_buffer)
 
         # Encrypt-then-mac
-        ciphertext = aes_enc(self.uo.enc_key, PKCS7.pad(buffer))
+        ciphertext = aes_enc(self.uo.enc_key, plain_buffer)
         mac = cbc_mac(self.uo.mac_key, ciphertext)
 
         # Result request body
@@ -137,5 +138,6 @@ class ProcessData(object):
         self.resp_object_id = bytes_to_long(decrypted[1:5])
         self.resp_nonce = EBUtils.demangle_nonce(decrypted[5:5+EBConsts.FRESHNESS_NONCE_LEN])
         self.decrypted = decrypted[5+EBConsts.FRESHNESS_NONCE_LEN:]
+        self.decrypted = PKCS7.unpad(self.decrypted)
         return self.response
 
