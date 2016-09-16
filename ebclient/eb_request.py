@@ -63,8 +63,11 @@ class RequestCall(object):
             raise Error('Currently only the fast retry is supported')
 
         last_exception = None
-        for i in range(0, retry.maxRetry):
+        for i in range(0, retry.max_retry):
             try:
+                if i > 0:
+                    retry.sleep_jitter()
+
                 self.call_once()
                 return self.response
 

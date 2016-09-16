@@ -50,13 +50,13 @@ class Retry(object):
 
 
 class SimpleRetry(Retry):
-    def __init__(self, maxRetry=3, jitterBase=200, jitterRand=50, *args, **kwargs):
-        self.maxRetry = maxRetry
-        self.jitterBase = jitterBase
-        self.jitterRand = jitterRand
+    def __init__(self, max_retry=3, jitter_base=200, jitter_rand=50, *args, **kwargs):
+        self.max_retry = max_retry
+        self.jitter_base = jitter_base
+        self.jitter_rand = jitter_rand
 
     def gen_jitter(self):
-        return self.jitterBase + (get_random_integer(2*self.jitterRand) - self.jitterRand)
+        return self.jitter_base + (get_random_integer(2*self.jitter_rand) - self.jitter_rand)
 
     def sleep_jitter(self):
         time.sleep(self.gen_jitter()/1000.0)
