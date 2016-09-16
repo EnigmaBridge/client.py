@@ -85,6 +85,11 @@ class CreateUO:
         :param obj_type:
         :return:
         """
+        if spec is None:
+            raise ValueError('Spec cannot be None')
+        if TemplateFields.generation not in spec:
+            spec[TemplateFields.generation] = {}
+
         spec[TemplateFields.generation][TemplateFields.commkey] = \
             Gen.CLIENT if (obj_type & (1L << TemplateFields.FLAG_COMM_GEN)) > 0 else Gen.LEGACY_RANDOM
         spec[TemplateFields.generation][TemplateFields.appkey] = \
