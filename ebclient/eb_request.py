@@ -112,7 +112,7 @@ class RequestCall(object):
             self.response.response = json
 
             # Check the code
-            if json['status'] is None:
+            if not 'status' in json:
                 raise InvalidResponse('No status field')
 
             self.response.status = from_hex(json['status'])

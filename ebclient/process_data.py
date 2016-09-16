@@ -98,7 +98,9 @@ class ProcessData(object):
         """
         if self.response is None:
             raise ValueError('Empty response')
-        if self.response.response is None or self.response.response['result'] is None:
+        if self.response.response is None \
+                or 'result' not in self.response.response \
+                or self.response.response['result'] is None:
             raise ValueError('No result data')
 
         res_hex = self.response.response['result']
