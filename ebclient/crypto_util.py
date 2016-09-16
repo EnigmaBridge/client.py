@@ -143,6 +143,31 @@ def str_equals(a, b):
     return match
 
 
+def bytes_replace(byte_str, start_idx, stop_idx, replacement):
+    """
+    Replaces given portion of the byte string with the replacement, returns new array
+    :param bytes:
+    :param start_idx:
+    :param stop_idx:
+    :param replacement:
+    :return:
+    """
+    return byte_str[:start_idx] + replacement + byte_str[stop_idx:]
+
+
+def bytes_transform(byte_str, start_idx, stop_idx, fction):
+    """
+    Takes portion of the byte array and passes it to the function for transformation.
+    Result is replaced in the byte string, new one is created.
+    :param bytes:
+    :param start_idx:
+    :param stop_idx:
+    :param fction:
+    :return:
+    """
+    return bytes_replace(byte_str, start_idx, stop_idx, fction(byte_str[start_idx:stop_idx]))
+
+
 #
 # Randomness
 #

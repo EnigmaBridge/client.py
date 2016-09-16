@@ -10,6 +10,7 @@ import json
 from create_uo import Gen
 from create_uo import TemplateFields
 from create_uo import Environment
+from create_uo import KeyTypes
 from eb_consts import UOTypes
 
 
@@ -132,5 +133,116 @@ class CreateUO:
         caller = RequestCall(req)
         resp = caller.call()
         return resp
+
+
+class TemplateKey(object):
+    """
+    Simple class represents key to be set to the template
+    """
+    def __init__(self, type=None, key=None, *args, **kwargs):
+        self.type = type
+        self.key = key
+
+
+class TemplateProcessor(object):
+    """
+    Processes input template
+     - fills in the keys
+     - sets flags accordingly
+     - encrypts
+    """
+    def __init__(self, configuration=None, keys=None, template=None, *args, **kwargs):
+        self.config = configuration
+        self.keys = keys
+        self.template = template
+
+        # Processing
+        self.tpl_buff = None
+
+    def process(self, template):
+        if template is not None:
+            self.template = template
+
+        self.validate(self.template)
+
+        self.tpl_buff = from_hex(self.template['result']['template'])
+
+        self.fill_in_keys()
+
+        self.set_flags()
+
+
+        pass
+
+    def validate(self, template):
+        if template is None \
+                or 'result' not in template \
+                or 'encryptionoffset' not in template['result'] \
+                or 'flagoffset' not in template['result'] \
+                or 'keyoffsets' not in template['result'] \
+                or 'importkeys' not in template['result'] \
+                or 'template' not in template['result'] \
+                or 'objectid' not in template['result']:
+            raise InvalidResponse('Invalid template object')
+
+    def fill_in_keys(self):
+        if self.keys is None:
+            self.keys = {}
+
+        # Generate comm keys if not present
+        if KeyTypes.COMM_ENC not in self.keys:
+            self.keys[KeyTypes.COMM_ENC] = TemplateKey(type=KeyTypes.COMM_ENC, key=get_random_vector(EBConsts.COMM_ENC_KEY_LENGTH))
+        if KeyTypes.COMM_MAC not in self.keys:
+            self.keys[KeyTypes.COMM_MAC] = TemplateKey(type=KeyTypes.COMM_MAC, key=get_random_vector(EBConsts.COMM_MAC_KEY_LENGTH))
+
+        tpl = self.template['result']
+        key_offsets = tpl['keyoffsets']
+        for offset in key_offsets:
+            if offset is None \
+                    or 'type' not in offset \
+                    or 'length' not in offset \
+                    or 'offset' not in offset:
+                logger.info("Invalid offset: %s", offset)
+                continue
+
+            key_type = offset['type']
+            if key_type in self.keys:
+                c_key = self.keys[key_type]
+                c_len_bits = offset['length']
+                c_off_bits = offset['offset']
+
+                if len(c_key.key) * 8 != c_len_bits:
+                    logger.info("Key length mismatch for key: %s", key_type)
+                    continue
+
+                self.tpl_buff = bytes_replace(self.tpl_buff,
+                                              c_off_bits / 8,
+                                              (c_off_bits + c_len_bits) / 8,
+                                              c_key.key)
+            pass
+        pass
+
+    def set_flags(self):
+        """
+        Set flags representing generation way accordingly - commkeys are client generated, app key is server generated.
+        :return:
+        """
+        tpl = self.template['result']
+        offset = tpl['flagoffset']/8
+
+        # comm keys provided?
+        bytes_transform(self.tpl_buff, offset+1, offset+2, lambda x: self.set_flag_bit(x))
+
+    def set_flag_bit(self, x):
+        """
+        Function internally used in set_flags. No multi-line lambdas in python :/
+        :param x:
+        :return:
+        """
+        if KeyTypes.COMM_ENC in self.keys:
+            x &= ~0x8
+        if KeyTypes.APP_KEY in self.keys:
+            x &= ~0x10
+        return x
 
     
