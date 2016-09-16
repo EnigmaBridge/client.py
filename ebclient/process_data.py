@@ -71,6 +71,7 @@ class ProcessData(object):
         self.request = RequestHolder()
         self.request.nonce = get_random_vector(EBConsts.FRESHNESS_NONCE_LEN)
         self.request.api_object = EBUtils.build_api_object(self.uo)
+        self.request.endpoint = self.configuration.endpoint_process
         self.request.configuration = self.configuration
         self.request.api_method = EBConsts.REQUEST_PROCESS_DATA
 
@@ -84,7 +85,7 @@ class ProcessData(object):
         mac = cbc_mac(self.uo.mac_key, ciphertext)
 
         # Result request body
-        self.request.body = "Packet0_%s_0000%s" % (EBUtils.get_request_type(self.uo), to_hex(ciphertext + mac))
+        self.request.body = {"data":"Packet0_%s_0000%s" % (EBUtils.get_request_type(self.uo), to_hex(ciphertext + mac))}
         return self.request
 
     def decrypt_result(self, *args, **kwargs):
