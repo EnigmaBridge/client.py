@@ -68,7 +68,7 @@ class ProcessData(object):
         self.request = RequestHolder()
         self.request.nonce = get_random_vector(EBConsts.FRESHNESS_NONCE_LEN)
         self.request.api_object = EBUtils.build_api_object(self.uo)
-        self.request.endpoint = self.configuration.endpoint_process
+        self.request.endpoint = self.uo.resolve_endpoint()
         self.request.configuration = self.configuration
         self.request.api_method = EBConsts.REQUEST_PROCESS_DATA
 
