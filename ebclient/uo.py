@@ -1,7 +1,6 @@
 import logging
 import re
 import time
-from eb_utils import EBUtils
 from eb_consts import EBConsts
 from crypto_util import *
 from py3compat import *
