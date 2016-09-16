@@ -21,6 +21,56 @@ logger = logging.getLogger(__name__)
 
 
 class CreateUO:
+    def __init__(self, configuration=None, tpl=None, keys=None, *args, **kwargs):
+        self.configuration = configuration
+        self.keys = keys
+        self.tpl = tpl
+        self.import_resp = None
+        pass
+
+    def create_uo(self, configuration=None, tpl=None, keys=None):
+        if configuration is not None:
+            self.configuration = configuration
+        if tpl is not None:
+            self.tpl = tpl
+        if keys is not None:
+            self.keys = keys
+
+        # Create template specifications, using local config and defaults.
+        spec = CreateUO.get_template_request_spec(self.configuration)
+        if self.tpl is not None:
+            if isinstance(self.tpl, types.DictionaryType):
+                spec = EBUtils.merge(spec, self.tpl)
+            else:
+                raise ValueError('Unknown tpl format')
+
+        # Fetch template for new UO.
+        tpl_resp = CreateUO.template_request(configuration, spec)
+
+        # Process the template, fill in the keys, do the crypto
+        tpl_processor = TemplateProcessor(configuration=configuration, keys=self.keys, tpl_response=tpl_resp)
+        tpl_req = tpl_processor.process()
+
+        # Import the initialized UO
+        self.import_resp = CreateUO.import_object(configuration=configuration, tpl=tpl_req)
+
+        # Build UO
+        uo = CreateUO.build_imported_object(configuration=configuration, tpl_import_req=tpl_req, import_resp=self.import_resp)
+        return uo
+
+    def create_rsa(self, bits, configuration=None, tpl=None):
+        rsa_obj_type = CreateUO.get_rsa_type(bits)
+        tpl_type = CreateUO.get_uo_type(rsa_obj_type, True, False)
+
+        tpl = CreateUO.set_type(tpl if tpl is not None else dict(), tpl_type)
+        keys = list()
+
+        # create UO
+        uo = self.create_uo(configuration=configuration, tpl=tpl, keys=keys)
+
+        # Process public key part from the response.
+        n, e = TemplateProcessor.read_serialized_rsa_pub_key(self.import_resp['result']['publickey'])
+        return RSAPrivateKey(uo=uo, n=n, e=e)
 
     @staticmethod
     def get_default_template():
@@ -246,10 +296,10 @@ class TemplateProcessor(object):
      - sets flags accordingly
      - encrypts
     """
-    def __init__(self, configuration=None, keys=None, template=None, *args, **kwargs):
+    def __init__(self, configuration=None, keys=None, tpl_response=None, *args, **kwargs):
         self.config = configuration
         self.keys = keys
-        self.response = template
+        self.response = tpl_response
         self.template = None
 
         # Processing
@@ -259,13 +309,10 @@ class TemplateProcessor(object):
         self.authorization = None
         self.tpl = None
 
-    def process(self, template):
-        if template is not None:
-            self.template = template
-
+    def process(self, *args, **kwargs):
         self.validate(self.response)
 
-        self.template = self.template['result']
+        self.template = self.response['result']
         self.tpl_buff = from_hex(self.template['template'])
 
         self.fill_in_keys()
