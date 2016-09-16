@@ -75,21 +75,43 @@ class CreateUO:
         return dst
 
     @staticmethod
-    def set_type(spec, type):
+    def set_type(spec, obj_type):
         """
         Updates type integer in the cerate UO specification.
         Type has to already have generations flags set correctly.
-        Generation field is set accordingly
+        Generation field is set accordingly.
+
         :param spec:
-        :param type:
+        :param obj_type:
         :return:
         """
         spec[TemplateFields.generation][TemplateFields.commkey] = \
-            Gen.CLIENT if (type & (1L << TemplateFields.FLAG_COMM_GEN)) > 0 else Gen.LEGACY_RANDOM
+            Gen.CLIENT if (obj_type & (1L << TemplateFields.FLAG_COMM_GEN)) > 0 else Gen.LEGACY_RANDOM
         spec[TemplateFields.generation][TemplateFields.appkey] = \
-            Gen.CLIENT if (type & (1L << TemplateFields.FLAG_APP_GEN)) > 0 else Gen.LEGACY_RANDOM
-        spec[TemplateFields.type] = "%x" % type
+            Gen.CLIENT if (obj_type & (1L << TemplateFields.FLAG_APP_GEN)) > 0 else Gen.LEGACY_RANDOM
+        spec[TemplateFields.type] = "%x" % obj_type
         return spec
+
+    @staticmethod
+    def get_uo_type(obj_type, comm_keys_provided=True, app_keys_provided=True):
+        """
+        Constructs UO type from the operation and keys provided, clears bits set ib obj_type before
+        unless None is specified to the given parameters.
+
+        :param obj_type:
+        :param comm_keys_provided:
+        :param app_keys_provided:
+        :return:
+        """
+        if comm_keys_provided is not None or comm_keys_provided == False:
+            obj_type &= ~(1L << TemplateFields.FLAG_COMM_GEN)
+        elif comm_keys_provided:
+            obj_type |= (1L << TemplateFields.FLAG_COMM_GEN)
+
+        if app_keys_provided is not None or app_keys_provided == False:
+            obj_type &= ~(1L << TemplateFields.FLAG_APP_GEN)
+        elif app_keys_provided:
+            obj_type |= (1L << TemplateFields.FLAG_APP_GEN)
 
     @staticmethod
     def get_rsa_type(bitsize):
