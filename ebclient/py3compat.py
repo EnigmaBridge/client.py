@@ -15,6 +15,6 @@ else:
 
 
 def parse_url(url):
-    if urlparse is None:
+    if 'urlparse' not in globals() or urlparse is None:
         import_urlparse()
     return urlparse(url)
