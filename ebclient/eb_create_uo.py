@@ -329,7 +329,7 @@ class TemplateProcessor(object):
         # Encrypt the template - symmetric encryption
         tpl_enc_key = get_random_vector(EBConsts.TPL_ENC_KEY_LENGTH)
         tpl_mac_key = get_random_vector(EBConsts.TPL_MAC_KEY_LENGTH)
-        enc_offset = self.template['encryptionoffset']
+        enc_offset = self.template['encryptionoffset']/8
         tpl_encrypted = self.encrypt_template(tpl_enc_key, tpl_mac_key, enc_offset)
 
         # Wrap encryption keys with
