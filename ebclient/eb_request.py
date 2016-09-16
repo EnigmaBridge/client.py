@@ -118,7 +118,7 @@ class RequestCall(object):
             if not 'status' in json:
                 raise InvalidResponse('No status field')
 
-            self.response.status = from_hex(json['status'])
+            self.response.status = bytes_to_long(from_hex(json['status']))
             if self.response.status != EBConsts.STATUS_OK:
                 raise InvalidStatus('Status is %s' % json['statusdetail'])
 
