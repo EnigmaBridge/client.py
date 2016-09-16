@@ -48,6 +48,8 @@ class EBConsts(object):
     HTTP_METHOD_GET = 'GET'
     HTTP_METHOD_POST = 'POST'
 
+    REQUEST_PROCESS_DATA = 'ProcessData'
+
     REQUEST_TYPES = {
         UOTypes.HMAC: 'HMAC',
         UOTypes.SCRAMBLE: 'SCRAMBLE',

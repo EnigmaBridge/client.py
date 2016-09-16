@@ -29,7 +29,7 @@ class ProcessData(object):
         self.resp_nonce = None
         self.resp_object_id = None
 
-    def call_request(self, input_data=None, *args, **kwargs):
+    def call(self, input_data=None, *args, **kwargs):
         """
         Calls the request with input data using given configuration (retry, timeout, ...).
         :param input_data:
@@ -72,6 +72,7 @@ class ProcessData(object):
         self.request.nonce = get_random_vector(EBConsts.FRESHNESS_NONCE_LEN)
         self.request.api_object = EBUtils.build_api_object(self.uo)
         self.request.configuration = self.configuration
+        self.request.api_method = EBConsts.REQUEST_PROCESS_DATA
 
         # Build plaintext buffer
         buffer = "\x1f%s%s%s" % (to_bytes(self.uo.uo_id, 4),
