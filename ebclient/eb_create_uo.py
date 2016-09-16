@@ -62,11 +62,17 @@ class CreateUO:
         rsa_obj_type = CreateUO.get_rsa_type(bits)
         tpl_type = CreateUO.get_uo_type(rsa_obj_type, True, False)
 
-        tpl = CreateUO.set_type(tpl if tpl is not None else dict(), tpl_type)
-        keys = list()
+        if configuration is not None:
+            self.configuration = configuration
+        if tpl is not None:
+            self.tpl = tpl
+        if self.keys is None:
+            self.keys = dict()
+
+        self.tpl = CreateUO.set_type(self.tpl if self.tpl is not None else dict(), tpl_type)
 
         # create UO
-        uo = self.create_uo(configuration=configuration, tpl=tpl, keys=keys)
+        uo = self.create_uo(configuration=self.configuration, tpl=self.tpl, keys=self.keys)
 
         # Process public key part from the response.
         n, e = TemplateProcessor.read_serialized_rsa_pub_key(self.import_resp['result']['publickey'])
