@@ -47,8 +47,6 @@ class ProcessData(object):
 
         except Exception as e:
             logger.info("Exception throw %s", e)
-
-
         pass
 
     def build_request(self, input_data=None, *args, **kwargs):

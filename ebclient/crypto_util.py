@@ -1,4 +1,3 @@
-__author__ = 'dusanklinec'
 """
 Provides basic cryptographic utilities for the Python EnigmaBridge client, e.g.,
 generating random numbers, encryption, decryption, padding, etc...
@@ -19,6 +18,10 @@ from Crypto.Util.number import long_to_bytes, bytes_to_long, size, ceil_div
 
 # Logging if needed
 logger = logging.getLogger(__name__)
+
+
+__author__ = 'dusanklinec'
+
 
 #
 # Utils
