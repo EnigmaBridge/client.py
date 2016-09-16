@@ -453,9 +453,9 @@ class TemplateProcessor(object):
                 logger.info("Invalid key: %s", c_key)
                 continue
 
-            if rsa1024 is not None and c_key['type'] == 'rsa1024':
+            if rsa1024 is None and c_key['type'] == 'rsa1024':
                 rsa1024 = c_key
-            if rsa2048 is not None and c_key['type'] == 'rsa2048':
+            if rsa2048 is None and c_key['type'] == 'rsa2048':
                 rsa2048 = c_key
 
         return rsa2048 if rsa2048 is not None else rsa1024
