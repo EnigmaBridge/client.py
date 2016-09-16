@@ -144,6 +144,18 @@ class TemplateKey(object):
         self.key = key
 
 
+class TemplateImportRequest(object):
+    """
+    Represents template import request with fields set
+    """
+    def __init__(self, keys=None, tpl=None, import_key=None, object_id=None, authorization=None, *args, **kwargs):
+        self.keys = keys
+        self.tpl = tpl
+        self.import_key = import_key
+        self.object_id = object_id
+        self.authorization = authorization
+
+
 class TemplateProcessor(object):
     """
     Processes input template
@@ -195,7 +207,13 @@ class TemplateProcessor(object):
         # Final template: 0xa1 | len-2B | RSA-ENC-BLOB | 0xa2 | len-2B | encrypted-maced-template
         self.tpl = bchr(0xa1) + short_to_bytes(len(rsa_encrypted)) + rsa_encrypted \
                    + bchr(0xa2) + short_to_bytes(len(tpl_encrypted)) + tpl_encrypted
-        return self.tpl
+
+        req = TemplateImportRequest(tpl=self.tpl,
+                                    keys=self.keys,
+                                    import_key=self.import_key,
+                                    object_id=self.object_id,
+                                    authorization=self.authorization)
+        return req
 
     def validate(self, response):
         if response is None \
