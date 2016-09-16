@@ -22,20 +22,34 @@ class ProcessData(object):
         # Request & response
         self.request = None
         self.response = None
+        self.caller = None
 
+        # Call results
         self.decrypted = None
         self.resp_nonce = None
         self.resp_object_id = None
 
     def call_request(self, input_data=None, *args, **kwargs):
         """
-        Calls the request with input data using given ocnfiguration (retry, timeout, ...).
+        Calls the request with input data using given configuration (retry, timeout, ...).
         :param input_data:
         :param args:
         :param kwargs:
         :return:
         """
-        # TODO: Implement
+        self.build_request(input_data)
+        self.caller = RequestCall(self.request)
+
+        try:
+            self.caller.call()
+            self.response = self.caller.response
+            self.decrypt_result()
+            return self.decrypted
+
+        except Exception as e:
+            logger.info("Exception throw %s", e)
+
+
         pass
 
     def build_request(self, input_data=None, *args, **kwargs):

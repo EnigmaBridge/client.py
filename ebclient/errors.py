@@ -16,3 +16,7 @@ class InvalidResponse(Error):
 class InvalidStatus(Error):
     """Invalid server response"""
 
+
+class RequestFailed(Error):
+    """API request failed"""
+

@@ -42,7 +42,7 @@ class RequestCall(object):
     Class responsible for making a request on the EB API according to the configuration.
     """
 
-    def __init__(self, request = None, *args, **kwargs):
+    def __init__(self, request=None, *args, **kwargs):
         self.request = request
         self.response = None
         self.last_resp = None
@@ -72,7 +72,7 @@ class RequestCall(object):
                 last_exception = ex
                 logger.debug("Request %d failed, exceptionL %s", i, ex)
 
-        raise last_exception
+        raise RequestFailed(last_exception)
 
     def call_once(self, request=None, *args, **kwargs):
         """
@@ -114,7 +114,9 @@ class RequestCall(object):
             # Check the code
             if json['status'] is None:
                 raise InvalidResponse('No status field')
-            if from_hex(json['status']) != EBConsts.STATUS_OK:
+
+            self.response.status = from_hex(json['status'])
+            if self.response.status != EBConsts.STATUS_OK:
                 raise InvalidStatus('Status is %s' % json['statusdetail'])
 
         else:
