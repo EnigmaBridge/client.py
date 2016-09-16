@@ -479,13 +479,14 @@ class TemplateProcessor(object):
         n_bit_size = long_bit_size(n)
         bs = 0
         if n_bit_size > 1024-10 and n_bit_size < 1024+10:
-            bs = 1024
+            bs = 128
         elif n_bit_size > 2048-10 and n_bit_size < 2048+10:
-            bs = 2048
+            bs = 256
         else:
             raise CryptoError('Unknown RSA modulus size: %d', n_bit_size)
 
-        return rsa_enc(PKCS15.pad(plain, bs=bs, bt=2), n, e)
+        padded = PKCS15.pad(plain, bs=bs, bt=2)
+        return rsa_enc(padded, n, e)
 
     @staticmethod
     def read_serialized_rsa_pub_key(serialized):
