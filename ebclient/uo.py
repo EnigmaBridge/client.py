@@ -68,8 +68,8 @@ class BackoffRetry(Retry):
 class Configuration(object):
     def __init__(self, *args, **kwargs):
         # Main endpoints
-        self.endpoint_process = Endpoint.url('https://site2.enigabridge.com:11180')
-        self.endpoint_enroll = Endpoint.url('https://site2.enigabridge.com:11182')
+        self.endpoint_process = Endpoint.url('https://site2.enigmabridge.com:11180')
+        self.endpoint_enroll = Endpoint.url('https://site2.enigmabridge.com:11182')
 
         # Request configuration - retry + parameters
         self.api_key = 'API_TEST'
