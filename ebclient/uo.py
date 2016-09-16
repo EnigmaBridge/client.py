@@ -76,8 +76,8 @@ class Configuration(object):
         self.http_method = EBConsts.HTTP_METHOD_POST
         self.method = EBConsts.METHOD_REST
         self.timeout = 90000
-        self.retry = None
-        self.create_tpl = {} # CreateUO template
+        self.retry = SimpleRetry()
+        self.create_tpl = dict() # CreateUO template
 
 
 class UO(object):
