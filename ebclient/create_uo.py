@@ -134,6 +134,60 @@ class CreateUO:
         resp = caller.call()
         return resp
 
+    @staticmethod
+    def import_object(configuration, tpl):
+        data = {}
+        data['objectid'] = tpl.object_id
+        data['importkey'] = tpl.import_key['id']
+        data['object'] = to_hex(tpl.tpl)
+        data['authorization'] = tpl.authorization
+
+        req = RequestHolder()
+        req.endpoint = configuration.endpoint_enroll
+        req.api_method = 'CreateUserObject'
+        req.api_object = EBUtils.build_api_object(api_key=configuration.api_key, uo_id=0x1)
+        req.nonce = EBUtils.generate_nonce()
+        req.body = data
+
+        # Do the request with retry. isNull() == true in case of a fail.
+        call = RequestCall(req)
+        return call.call()
+
+    @staticmethod
+    def build_imported_object(configuration, tpl_import_req, import_resp):
+        """
+        Builds uo from the imported object
+        """
+        if import_resp is None \
+            or 'result' not in import_resp \
+            or 'handle' not in import_resp['result']:
+            logger.info('Invalid result: %s', import_resp)
+            raise InvalidResponse('Invalid import result')
+
+        # TEST_API00000022480000300004
+        handle = import_resp['result']['handle']
+        handle_len = len(handle)
+
+        api_key     = handle[0:                   handle_len-10-10]
+        uo_id_str   = handle[handle_len-10-10+2:  handle_len-10]
+        uo_type_str = handle[handle_len-10+2:]
+
+        uo_id = bytes_to_long(uo_id_str)
+        uo_type = bytes_to_long(uo_type_str)
+
+        uo = UO(uo_id=uo_id,
+                uo_type=uo_type,
+                enc_key=tpl_import_req.keys[KeyTypes.COMM_ENC],
+                mac_key=tpl_import_req.keys[KeyTypes.COMM_MAC])
+
+        uo.configuration = configuration
+
+        # Store API key only if it differs from slot.
+        if configuration is not None and configuration.api_key != api_key:
+            uo.api_key = api_key
+
+        return uo
+
 
 class TemplateKey(object):
     """
