@@ -8,6 +8,11 @@ class Error(Exception):
 class CryptoError(Error):
     """MAC invalid, ..."""
 
+
 class InvalidResponse(Error):
+    """Invalid server response"""
+
+
+class InvalidStatus(Error):
     """Invalid server response"""
 
