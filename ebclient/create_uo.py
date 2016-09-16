@@ -409,7 +409,7 @@ class TemplateProcessor(object):
         :return:
         """
 
-        n, e = self.read_serialized_rsa_pub_key(self.import_key['key'])
+        n, e = TemplateProcessor.read_serialized_rsa_pub_key(self.import_key['key'])
         n_bit_size = long_bit_size(n)
         bs = 0
         if n_bit_size > 1024-10 and n_bit_size < 1024+10:
@@ -421,7 +421,8 @@ class TemplateProcessor(object):
 
         return rsa_enc(PKCS15.pad(plain, bs=bs, bt=2), n, e)
 
-    def read_serialized_rsa_pub_key(self, serialized):
+    @staticmethod
+    def read_serialized_rsa_pub_key(serialized):
         """
         Reads serialized RSA pub key
         TAG|len-2B|value. 81 = exponent, 82 = modulus
@@ -450,7 +451,7 @@ class TemplateProcessor(object):
 
         if e is None or n is None:
             logger.warning("Could not process import key")
-            return None
+            raise ValueError('Public key deserialization failed')
 
         return n, e
 
