@@ -70,7 +70,7 @@ class CreateUO:
             raise ValueError('Unrecognized spec type')
 
         if spec is not None:
-            dst = EBUtils.merge(dst, spec)
+            dst = EBUtils.merge(dst, src)
 
         return dst
 
