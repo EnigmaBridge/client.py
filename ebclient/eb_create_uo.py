@@ -412,7 +412,7 @@ class TemplateProcessor(object):
         offset = self.template['flagoffset']/8
 
         # comm keys provided?
-        bytes_transform(self.tpl_buff, offset+1, offset+2, lambda x: self.set_flag_bit(x))
+        self.tpl_buff = bytes_transform(self.tpl_buff, offset+1, offset+2, lambda x: self.set_flag_bit(x))
 
     def set_flag_bit(self, x):
         """
