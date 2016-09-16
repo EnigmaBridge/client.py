@@ -311,6 +311,10 @@ class TemplateProcessor(object):
             self.keys[KeyTypes.COMM_ENC] = TemplateKey(type=KeyTypes.COMM_ENC, key=get_random_vector(EBConsts.COMM_ENC_KEY_LENGTH))
         if KeyTypes.COMM_MAC not in self.keys:
             self.keys[KeyTypes.COMM_MAC] = TemplateKey(type=KeyTypes.COMM_MAC, key=get_random_vector(EBConsts.COMM_MAC_KEY_LENGTH))
+        if KeyTypes.COMM_ENC_NEXT not in self.keys:
+            self.keys[KeyTypes.COMM_ENC_NEXT] = TemplateKey(type=KeyTypes.COMM_ENC_NEXT, key=get_random_vector(EBConsts.COMM_ENC_KEY_LENGTH))
+        if KeyTypes.COMM_MAC_NEXT not in self.keys:
+            self.keys[KeyTypes.COMM_MAC_NEXT] = TemplateKey(type=KeyTypes.COMM_MAC_NEXT, key=get_random_vector(EBConsts.COMM_MAC_KEY_LENGTH))
 
         tpl = self.template
         key_offsets = tpl['keyoffsets']

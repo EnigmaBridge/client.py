@@ -1,3 +1,5 @@
 APP_KEY = "app"
 COMM_ENC = "comenc"
 COMM_MAC = "commac"
+COMM_ENC_NEXT = "comnextenc"
+COMM_MAC_NEXT = "comnextmac"
