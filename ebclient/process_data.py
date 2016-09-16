@@ -13,10 +13,9 @@ logger = logging.getLogger(__name__)
 
 
 class ProcessData(object):
-    def __init__(self, uo=None, input_data=None, request_type=None, config=None, *args, **kwargs):
+    def __init__(self, uo=None, input_data=None, config=None, *args, **kwargs):
         self.uo = uo
         self.input_data = input_data
-        self.request_type = request_type
         self.configuration = config
 
         # Request & response
