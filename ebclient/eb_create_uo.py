@@ -222,6 +222,7 @@ class CreateUO:
         data['authorization'] = tpl.authorization
 
         req = RequestHolder()
+        req.configuration = configuration
         req.endpoint = configuration.endpoint_enroll
         req.api_method = 'CreateUserObject'
         req.api_object = EBUtils.build_api_object(api_key=configuration.api_key, uo_id=0x1)
@@ -310,9 +311,9 @@ class TemplateProcessor(object):
         self.tpl = None
 
     def process(self, *args, **kwargs):
-        self.validate(self.response)
+        self.validate(self.response.response)
 
-        self.template = self.response['result']
+        self.template = self.response.response['result']
         self.tpl_buff = from_hex(self.template['template'])
 
         self.fill_in_keys()
@@ -413,11 +414,12 @@ class TemplateProcessor(object):
         :param x:
         :return:
         """
+        x = bytes_to_byte(x)
         if KeyTypes.COMM_ENC in self.keys:
             x &= ~0x8
         if KeyTypes.APP_KEY in self.keys:
             x &= ~0x10
-        return x
+        return byte_to_bytes(x)
 
     def encrypt_template(self, enc_key, mac_key, enc_offset):
         """
