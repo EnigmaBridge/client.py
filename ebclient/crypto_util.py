@@ -317,7 +317,8 @@ class PKCS15(Padding):
         elif bt == 1:
             padding_str = bchr(0xFF) * ps_len
         elif bt == 2:
-            padding_str = to_bytes([int(get_random_range(1, 0x100)) for _ in range (10)])
+            arr = [int(get_random_range(1, 0x100)) for _ in range(ps_len)]
+            padding_str = to_bytes(arr)
         else:
             raise ValueError('Unknown padding type')
 
