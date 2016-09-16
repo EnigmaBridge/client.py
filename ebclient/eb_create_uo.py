@@ -231,9 +231,9 @@ class CreateUO:
         req.configuration = configuration
         req.endpoint = configuration.endpoint_enroll
         req.api_method = 'CreateUserObject'
-        req.api_object = EBUtils.build_api_object(api_key=configuration.api_key, uo_id=0x1)
+        req.api_object = EBUtils.build_api_object(api_key=configuration.api_key, uo_id=to_long(from_hex(tpl.object_id)))
         req.nonce = EBUtils.generate_nonce()
-        req.body = {'data':data}
+        req.body = {'data': data}
 
         # Do the request with retry. isNull() == true in case of a fail.
         call = RequestCall(req)
