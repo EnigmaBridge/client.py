@@ -85,7 +85,7 @@ class EBUtils(object):
         :param nonce:
         :return:
         """
-        return [chr((ord(y)-1) & 0xff) for y in nonce]
+        return to_bytes([chr((ord(y)-1) & 0xff) for y in nonce])
 
     @staticmethod
     def merge(a, b, path=None):
