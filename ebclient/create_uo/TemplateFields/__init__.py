@@ -4,6 +4,7 @@ generation = "generation"
 commkey = "commkey"
 billingkey = "billingkey"
 appkey = "appkey"
+environment = "environment"
 
 yes = "yes"
 no = "no"

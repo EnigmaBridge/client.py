@@ -158,12 +158,12 @@ class CreateUO:
         :param app_keys_provided:
         :return:
         """
-        if comm_keys_provided is not None or comm_keys_provided == False:
+        if comm_keys_provided is not None and comm_keys_provided == False:
             obj_type &= ~(1L << TemplateFields.FLAG_COMM_GEN)
         elif comm_keys_provided:
             obj_type |= (1L << TemplateFields.FLAG_COMM_GEN)
 
-        if app_keys_provided is not None or app_keys_provided == False:
+        if app_keys_provided is not None and app_keys_provided == False:
             obj_type &= ~(1L << TemplateFields.FLAG_APP_GEN)
         elif app_keys_provided:
             obj_type |= (1L << TemplateFields.FLAG_APP_GEN)
