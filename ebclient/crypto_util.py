@@ -179,6 +179,15 @@ def bytes_to_short(byte, offset=0):
 def short_to_bytes(short):
     return struct.pack('>H', int(short))
 
+
+def bytes_to_byte(byte, offset=0):
+    return struct.unpack('>B', byte[offset:offset+1])[0]
+
+
+def byte_to_bytes(byte):
+    return struct.pack('>B', int(byte) & 0xFF)
+
+
 #
 # Randomness
 #

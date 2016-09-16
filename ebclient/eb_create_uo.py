@@ -495,7 +495,7 @@ class TemplateProcessor(object):
         pos = 0
         ln = len(rsa)
         while pos < ln:
-            tag = rsa[pos]
+            tag = bytes_to_byte(rsa, pos)
             pos += 1
             length = bytes_to_short(rsa, pos)
             pos += 2
