@@ -31,14 +31,17 @@ For more usage examples please refer to tests.
 ## Dependencies
 
 ```bash
-pip install  --upgrade pycrypto requests
+pip install pycrypto requests
 ```
 
 Or to install to home directory
 
 ```bash
-pip install --user --upgrade pycrypto requests
+pip install --user pycrypto requests
 ```
+
+If the error `ImportError: No module named Crypto` is thrown it's needed to run pip with `--upgrade` and update pycrypto
+to the latest version.
 
 ## Compatibility
 We should be compatible with Python 2.6+ and Python 3+.
