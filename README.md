@@ -7,6 +7,9 @@ With this repo you can use [Enigma Bridge] encryption service.
 Calling processData():
 
 ```python
+from ebclient.process_data import ProcessData
+from ebclient.uo import Configuration, Endpoint, SimpleRetry, UO
+from ebclient.crypto_util import *
 
 # Construct general configuration (endpoint, request config)
 cfg = Configuration()
@@ -22,7 +25,7 @@ uo_aes = UO(uo_id=0xee01,
             configuration=cfg)
 
 # ProcessData itself
-pd = ProcessData(uo=self.uo_aes, config=self.cfg)
+pd = ProcessData(uo=uo_aes, config=cfg)
 result = pd.call(from_hex('6bc1bee22e409f96e93d7e117393172a'))
 ```
 
