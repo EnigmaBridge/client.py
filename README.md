@@ -31,13 +31,13 @@ For more usage examples please refer to tests.
 ## Dependencies
 
 ```bash
-pip install pycrypto requests
+pip install  --upgrade pycrypto requests
 ```
 
 Or to install to home directory
 
 ```bash
-pip install --user pycrypto requests
+pip install --user --upgrade pycrypto requests
 ```
 
 ## Compatibility
