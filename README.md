@@ -2,6 +2,12 @@
 
 With this repo you can use [Enigma Bridge] encryption service.
 
+## Installation
+
+```bash
+pip install ebclient.py
+```
+
 ## Usage
 
 Calling processData():
