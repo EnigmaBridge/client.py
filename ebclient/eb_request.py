@@ -77,6 +77,54 @@ class RequestCall(object):
 
         raise RequestFailed(last_exception)
 
+    @staticmethod
+    def field_to_long(value):
+        """
+        Converts given value to long if possible, otherwise None is returned.
+
+        :param value:
+        :return:
+        """
+        if isinstance(value, (types.LongType, types.IntType)):
+            return long(value)
+        elif isinstance(value, basestring):
+            return bytes_to_long(from_hex(value))
+        else:
+            return None
+
+    def build_url(self):
+        """
+        Construct URL
+        e.g.,: http://site2.enigmabridge.com:12000/1.0/testAPI/GetAllAPIKeys/abcdef012345
+
+        :return:
+        """
+        url = "%s/1.0/%s/%s/%s" % (
+            self.request.endpoint.get_url(),
+            self.request.api_object,
+            self.request.api_method,
+            to_hex(self.request.nonce)
+        )
+        return url
+
+    @staticmethod
+    def get_text_status(json):
+        """
+        Extracts textual status from the response - statusdetail, if present.
+        Otherwise extracts status field.
+
+        :param json:
+        :return:
+        """
+        if json is None:
+            return None
+        elif 'statusdetail' in json:
+            return json['statusdetail']
+        elif 'status' in json:
+            return json['status']
+        else:
+            return None
+
     def call_once(self, request=None, *args, **kwargs):
         """
         Performs one API request.
@@ -94,19 +142,22 @@ class RequestCall(object):
         if config.http_method != EBConsts.HTTP_METHOD_POST or config.method != EBConsts.METHOD_REST:
             raise Error('Not implemented yet, only REST POST method is allowed')
 
-        # Construct URL
-        # e.g.,: http://site2.enigmabridge.com:12000/1.0/testAPI/GetAllAPIKeys/abcdef012345
-        url = "%s/1.0/%s/%s/%s" % (
-            self.request.endpoint.get_url(),
-            self.request.api_object,
-            self.request.api_method,
-            to_hex(self.request.nonce)
-        )
+        url = self.build_url()
         logger.info("URL to call: %s", url)
 
         # Do the request
         resp = requests.post(url, json=self.request.body, timeout=config.timeout)
         self.last_resp = resp
+        return self.check_response(resp)
+
+    def check_response(self, resp):
+        """
+        Checks response after request was made.
+        Checks status of the response, mainly
+
+        :param resp:
+        :return:
+        """
 
         # For successful API call, response code will be 200 (OK)
         if resp.ok:
@@ -115,12 +166,13 @@ class RequestCall(object):
             self.response.response = json
 
             # Check the code
-            if not 'status' in json:
+            if 'status' not in json:
                 raise InvalidResponse('No status field')
 
-            self.response.status = bytes_to_long(from_hex(json['status']))
+            self.response.status = self.field_to_long(json['status'])
             if self.response.status != EBConsts.STATUS_OK:
-                raise InvalidStatus('Status is %s' % json['statusdetail'])
+                txt_status = self.get_text_status(json)
+                raise InvalidStatus('Status is %s' % (txt_status if txt_status is not None else ""))
 
             return self.response
 
