@@ -23,6 +23,7 @@ class RequestHolder(object):
         self.nonce = nonce
         self.endpoint = endpoint
         self.configuration = config
+        self.url = None
         pass
 
 
@@ -142,7 +143,7 @@ class RequestCall(object):
         if config.http_method != EBConsts.HTTP_METHOD_POST or config.method != EBConsts.METHOD_REST:
             raise Error('Not implemented yet, only REST POST method is allowed')
 
-        url = self.build_url()
+        url = self.request.url if self.request.url is not None else self.build_url()
         logger.info("URL to call: %s", url)
 
         # Do the request
