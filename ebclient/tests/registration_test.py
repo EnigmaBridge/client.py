@@ -3,6 +3,7 @@ from ebclient.registration import *
 from ebclient.uo import Configuration, Endpoint, SimpleRetry, UO
 from ebclient.crypto_util import *
 import unittest
+import json
 
 
 __author__ = 'dusanklinec'
@@ -30,7 +31,7 @@ class RegistrationTest(unittest.TestCase):
 
         regreq = RegistrationRequest(client_data=client_data_reg, env=ENVIRONMENT_DEVELOPMENT, config=self.cfg)
         regresponse = regreq.call()
-        print(regresponse)
+        print(json.dumps(regresponse, indent=2))
 
         client_api_req = {
             'authentication': 'password',
@@ -48,7 +49,7 @@ class RegistrationTest(unittest.TestCase):
 
         apireq = ApiKeyRequest(client_data=client_api_req, endpoint=endpoint, env=ENVIRONMENT_DEVELOPMENT, config=self.cfg)
         apiresponse = apireq.call()
-        print apiresponse
+        print(json.dumps(apiresponse, indent=2))
 
 
 if __name__ == "__main__":
