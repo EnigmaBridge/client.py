@@ -24,6 +24,7 @@ class RequestHolder(object):
         self.endpoint = endpoint
         self.configuration = config
         self.url = None
+        self.headers = None
         pass
 
 
@@ -148,7 +149,7 @@ class RequestCall(object):
         logger.info("URL to call: %s", url)
 
         # Do the request
-        resp = requests.post(url, json=self.request.body, timeout=config.timeout)
+        resp = requests.post(url, json=self.request.body, timeout=config.timeout, headers=self.request.headers)
         self.last_resp = resp
         return self.check_response(resp)
 
