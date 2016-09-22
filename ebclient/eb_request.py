@@ -43,10 +43,11 @@ class RequestCall(object):
     Class responsible for making a request on the EB API according to the configuration.
     """
 
-    def __init__(self, request=None, *args, **kwargs):
+    def __init__(self, request=None, response_checker=None, *args, **kwargs):
         self.request = request
         self.response = None
         self.last_resp = None
+        self.response_checker = response_checker
         pass
 
     def call(self, request=None, *args, **kwargs):
@@ -174,6 +175,9 @@ class RequestCall(object):
             if self.response.status != EBConsts.STATUS_OK:
                 txt_status = self.get_text_status(json)
                 raise InvalidStatus('Status is %s' % (txt_status if txt_status is not None else ""))
+
+            if self.response_checker is not None:
+                self.response_checker(self.response)
 
             return self.response
 
