@@ -27,6 +27,7 @@ class ProcessData(object):
         self.decrypted = None
         self.resp_nonce = None
         self.resp_object_id = None
+        self.exception = None
 
     def call(self, input_data=None, *args, **kwargs):
         """
@@ -38,6 +39,7 @@ class ProcessData(object):
         """
         self.build_request(input_data)
         self.caller = RequestCall(self.request)
+        self.exception = None
 
         try:
             self.caller.call()
@@ -46,6 +48,7 @@ class ProcessData(object):
             return self.decrypted
 
         except Exception as e:
+            self.exception = e
             logger.info("Exception throw %s", e)
         pass
 
