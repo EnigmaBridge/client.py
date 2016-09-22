@@ -1,15 +1,13 @@
 from ebclient.process_data import ProcessData
 from ebclient.uo import Configuration, Endpoint, SimpleRetry, UO
 from ebclient.crypto_util import *
+import unittest
+# import mock
+# import sys
+# import six
 
 
 __author__ = 'dusanklinec'
-
-
-# import mock
-# import sys
-import unittest
-# import six
 
 
 class ProcessDataTest(unittest.TestCase):

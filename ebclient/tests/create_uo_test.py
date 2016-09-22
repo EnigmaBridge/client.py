@@ -3,15 +3,13 @@ from ebclient.create_uo import TemplateFields, KeyTypes, Environment, Gen
 from ebclient.eb_create_uo import *
 from ebclient.uo import Configuration, Endpoint, SimpleRetry, UO
 from ebclient.crypto_util import *
+import unittest
+# import mock
+# import sys
+# import six
 
 
 __author__ = 'dusanklinec'
-
-
-# import mock
-# import sys
-import unittest
-# import six
 
 
 class CreateUOTest(unittest.TestCase):
