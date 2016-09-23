@@ -78,7 +78,7 @@ class BaseRegistrationRequest(object):
         self.request.url = self.config.endpoint_register.get_url() + "/api/v1/client"
         self.request.configuration = self.config
         self.request.api_method = self.operation
-        self.request.headers = {'X-Auth-Token': 'f'}
+        self.request.headers = {'X-Auth-Token': 'public'}
 
         # Result request body
         self.request.body = {
