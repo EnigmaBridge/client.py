@@ -88,7 +88,7 @@ class CreateUO:
             "format": 1,
             "protocol": 1,
             "environment": Environment.DEV, # shows whether the UO should be for production (live), test (pre-production testing), or dev (development)
-            "maxtps": "unlimited", # maximum guaranteed TPS
+            "maxtps": "one", # maximum guaranteed TPS
             "core": "empty", # how many cards have UO loaded permanently
             "persistence": "one_minute", # once loaded onto card, how long will the UO stay there without use (this excludes the "core")
             "priority": "default", # this defines a) priority when the server capacity is fully utilised and it also defines how quickly new copies of UO are installed (pre-empting icreasing demand)
