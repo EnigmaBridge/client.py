@@ -16,10 +16,13 @@ logger = logging.getLogger(__name__)
 
 class BaseRegistrationRequest(object):
     """
-    Base request class for registration requests
+    Base request class for hutx requests.
+    (Registration, API key generation, domain enrollment)
     """
-    def __init__(self, client_data=None, env=None, operation=None, config=None, *args, **kwargs):
+    def __init__(self, client_data=None, env=None, operation=None, config=None, api_data=None, aux_data=None, *args, **kwargs):
         self.client_data = client_data
+        self.api_data = api_data
+        self.aux_data = aux_data
         self.config = config
         self.env = env
         self.operation = operation
@@ -30,7 +33,7 @@ class BaseRegistrationRequest(object):
         self.caller = None
         pass
 
-    def call(self, client_data=None, *args, **kwargs):
+    def call(self, client_data=None, api_data=None, aux_data=None, *args, **kwargs):
         """
         Calls the request with input data using given configuration (retry, timeout, ...).
         :param input_data:
@@ -38,7 +41,7 @@ class BaseRegistrationRequest(object):
         :param kwargs:
         :return:
         """
-        self.build_request(client_data)
+        self.build_request(client_data=client_data, api_data=api_data, aux_data=aux_data)
         self.caller = RequestCall(self.request)
 
         try:
@@ -58,7 +61,13 @@ class BaseRegistrationRequest(object):
             logger.info("Exception throw %s", e)
         pass
 
-    def build_request(self, input_data=None, *args, **kwargs):
+    def get_endpoint(self):
+        return self.config.endpoint_register
+
+    def extend_request(self, req):
+        return req
+
+    def build_request(self, input_data=None, api_data=None, aux_data=None, *args, **kwargs):
         """
         Builds request
 
@@ -69,13 +78,17 @@ class BaseRegistrationRequest(object):
         """
         if input_data is not None:
             self.client_data = input_data
-        if self.client_data is None:
-            raise ValueError('Input data is None')
+        if api_data is not None:
+            self.api_data = api_data
+        if aux_data is not None:
+            self.aux_data = aux_data
 
         self.request = RequestHolder()
         self.request.nonce = get_random_vector(EBConsts.FRESHNESS_NONCE_LEN)
-        self.request.endpoint = self.config.endpoint_register
-        self.request.url = self.config.endpoint_register.get_url() + "/api/v1/client"
+
+        self.request.endpoint = self.get_endpoint()
+        self.request.url = self.get_endpoint().get_url() + "/api/v1/client"
+
         self.request.configuration = self.config
         self.request.api_method = self.operation
         self.request.headers = {'X-Auth-Token': 'public'}
@@ -86,9 +99,19 @@ class BaseRegistrationRequest(object):
             'version': 1,
             'function': self.operation,
             'environment': self.env if self.env is not None else ENVIRONMENT_DEVELOPMENT,
-            'client': self.client_data
         }
 
+        if self.client_data is not None:
+            self.request.body['client'] = self.client_data
+        if self.api_data is not None:
+            self.request.body['apidata'] = self.api_data
+        if self.aux_data is not None:
+            if isinstance(self.aux_data, types.DictionaryType):
+                self.request.body = EBUtils.merge(self.request.body, self.aux_data)
+            else:
+                raise ValueError('Aux data has to be a dictionary')
+
+        self.request = self.extend_request(self.request)
         return self.request
 
 
@@ -116,8 +139,56 @@ class ApiKeyRequest(BaseRegistrationRequest):
             config=config)
         self.endpoint = endpoint
 
-    def build_request(self, input_data=None, *args, **kwargs):
-        req = super(ApiKeyRequest, self).build_request(input_data, *args, **kwargs)
+    def extend_request(self, req):
         req.body['endpoint'] = self.endpoint
         return req
+
+
+class ShowApiRequest(BaseRegistrationRequest):
+    """
+    Load info about API key
+    """
+    def __init__(self, client_data=None, api_data=None, env=None, config=None, *args, **kwargs):
+        super(ShowApiRequest, self).__init__(
+            client_data=client_data,
+            api_data=api_data,
+            env=env,
+            operation=EBConsts.REQUEST_SHOW_API,
+            config=config)
+
+
+class EnrolDomainRequest(BaseRegistrationRequest):
+    """
+    Enrol a new domain name
+    """
+    def __init__(self, api_data=None, env=None, config=None, *args, **kwargs):
+        super(EnrolDomainRequest, self).__init__(
+            api_data=api_data,
+            env=env,
+            operation=EBConsts.REQUEST_ENROL_DOMAIN,
+            config=config)
+
+
+class GetDomainChallengeRequest(BaseRegistrationRequest):
+    """
+    Get challenge for domain update
+    """
+    def __init__(self, api_data=None, env=None, config=None, *args, **kwargs):
+        super(GetDomainChallengeRequest, self).__init__(
+            api_data=api_data,
+            env=env,
+            operation=EBConsts.REQUEST_GET_DOMAIN_CHALLENGE,
+            config=config)
+
+
+class UpdateDomainRequest(BaseRegistrationRequest):
+    """
+    Get challenge for domain update
+    """
+    def __init__(self, api_data=None, env=None, config=None, *args, **kwargs):
+        super(UpdateDomainRequest, self).__init__(
+            api_data=api_data,
+            env=env,
+            operation=EBConsts.REQUEST_GET_DOMAIN_CHALLENGE,
+            config=config)
 
