@@ -15,17 +15,22 @@ logger = logging.getLogger(__name__)
 
 
 class BaseRegistrationRequest(object):
+    CLIENT_SUFFIX = "/api/v1/client"
+    API_KEY_SUFFIX = "/api/v1/apikey"
+
     """
     Base request class for hutx requests.
     (Registration, API key generation, domain enrollment)
     """
-    def __init__(self, client_data=None, env=None, operation=None, config=None, api_data=None, aux_data=None, *args, **kwargs):
+    def __init__(self, client_data=None, env=None, operation=None, config=None, api_data=None, aux_data=None,
+                 url_suffix=None, *args, **kwargs):
         self.client_data = client_data
         self.api_data = api_data
         self.aux_data = aux_data
         self.config = config
         self.env = env
         self.operation = operation
+        self.url_suffix = url_suffix if url_suffix is not None else self.CLIENT_SUFFIX
 
         # Request & response
         self.request = None
@@ -105,7 +110,7 @@ class BaseRegistrationRequest(object):
         self.request.nonce = get_random_vector(EBConsts.FRESHNESS_NONCE_LEN)
 
         self.request.endpoint = self.get_endpoint()
-        self.request.url = self.get_endpoint().get_url() + "/api/v1/client"
+        self.request.url = self.get_endpoint().get_url() + self.url_suffix
 
         self.request.configuration = self.config
         self.request.api_method = self.operation
@@ -184,7 +189,8 @@ class EnrolDomainRequest(BaseRegistrationRequest):
             api_data=api_data,
             env=env,
             operation=EBConsts.REQUEST_ENROL_DOMAIN,
-            config=config)
+            config=config,
+            url_suffix=self.API_KEY_SUFFIX)
 
 
 class GetDomainChallengeRequest(BaseRegistrationRequest):
@@ -196,7 +202,8 @@ class GetDomainChallengeRequest(BaseRegistrationRequest):
             api_data=api_data,
             env=env,
             operation=EBConsts.REQUEST_GET_DOMAIN_CHALLENGE,
-            config=config)
+            config=config,
+            url_suffix=self.API_KEY_SUFFIX)
 
 
 class UpdateDomainRequest(BaseRegistrationRequest):
@@ -208,5 +215,6 @@ class UpdateDomainRequest(BaseRegistrationRequest):
             api_data=api_data,
             env=env,
             operation=EBConsts.REQUEST_GET_DOMAIN_CHALLENGE,
-            config=config)
+            config=config,
+            url_suffix=self.API_KEY_SUFFIX)
 
