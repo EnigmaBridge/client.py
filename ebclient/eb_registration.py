@@ -31,7 +31,24 @@ class BaseRegistrationRequest(object):
         self.request = None
         self.response = None
         self.caller = None
+        self.last_exception = None
         pass
+
+    def try_call(self, client_data=None, api_data=None, aux_data=None, *args, **kwargs):
+        """
+        Calls the request catching all exceptions
+        :param client_data:
+        :param api_data:
+        :param aux_data:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        try:
+            return self.call(client_data, api_data, aux_data, *args, **kwargs)
+        except Exception as e:
+            self.last_exception = e
+        return None
 
     def call(self, client_data=None, api_data=None, aux_data=None, *args, **kwargs):
         """
