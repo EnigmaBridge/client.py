@@ -214,7 +214,7 @@ class UpdateDomainRequest(BaseRegistrationRequest):
         super(UpdateDomainRequest, self).__init__(
             api_data=api_data,
             env=env,
-            operation=EBConsts.REQUEST_GET_DOMAIN_CHALLENGE,
+            operation=EBConsts.REQUEST_UPDATE_DOMAIN,
             config=config,
             url_suffix=self.API_KEY_SUFFIX)
 
