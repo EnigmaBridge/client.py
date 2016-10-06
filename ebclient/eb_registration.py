@@ -81,7 +81,7 @@ class BaseRegistrationRequest(object):
 
         except Exception as e:
             logger.info("Exception throw %s", e)
-            raise e
+            raise
         pass
 
     def get_endpoint(self):
