@@ -3,7 +3,7 @@ import sys
 from setuptools import setup
 from setuptools import find_packages
 
-version = '0.1.10'
+version = '0.1.11'
 
 # Please update tox.ini when modifying dependency version requirements
 install_requires = [
@@ -12,6 +12,14 @@ install_requires = [
     'setuptools>=1.0',
     'six'
 ]
+
+# TLS SNI for older python
+if sys.version_info < (2, 7, 10):
+    install_requires.extend([
+        'pyopenssl',
+        'ndg-httpsclient',
+        'pyasn1'
+    ])
 
 # env markers in extras_require cause problems with older pip: #517
 # Keep in sync with conditional_requirements.py.
