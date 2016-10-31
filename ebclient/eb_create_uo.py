@@ -28,13 +28,32 @@ class CreateUO:
         self.import_resp = None
         pass
 
-    def create_uo(self, configuration=None, tpl=None, keys=None):
+    def create_uo(self, configuration=None, tpl=None, keys=None, obj_type=None):
+        """
+        Create a new UserObject from the given template.
+
+        :param configuration:  EB configuration to use
+        :param tpl: CreateUserObject template, contain misc settings
+        :param keys: dictionary of keys, create_uo.KeyTypes. Communication keys, application key (if applicable).
+        :param obj_type: optional field for easy object type entry - required flags are computed from keys dict and tpl.
+        :return: UO - user object ready to use
+        """
         if configuration is not None:
             self.configuration = configuration
         if tpl is not None:
             self.tpl = tpl
         if keys is not None:
             self.keys = keys
+        if self.keys is None:
+            self.keys = dict()
+
+        # generate comm keys if not present
+        TemplateProcessor.generate_comm_keys_if_not_present(self.keys)
+
+        # obj_type infer
+        if obj_type is not None:
+            tpl_type = CreateUO.get_uo_type(obj_type, KeyTypes.COMM_ENC in self.keys, KeyTypes.APP_KEY in self.keys)
+            self.tpl = CreateUO.set_type(self.tpl if self.tpl is not None else dict(), tpl_type)
 
         # Create template specifications, using local config and defaults.
         spec = CreateUO.get_template_request_spec(self.configuration)
