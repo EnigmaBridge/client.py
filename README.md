@@ -21,7 +21,6 @@ from ebclient.crypto_util import *
 cfg = Configuration()
 cfg.endpoint_process = Endpoint.url('https://site2.enigmabridge.com:11180')
 cfg.api_key = 'API_TEST'
-cfg.retry = SimpleRetry()
 
 # UO you want to work with
 uo_aes = UO(uo_id=0xee01,
@@ -33,6 +32,7 @@ uo_aes = UO(uo_id=0xee01,
 # ProcessData itself
 pd = ProcessData(uo=uo_aes, config=cfg)
 result = pd.call(from_hex('6bc1bee22e409f96e93d7e117393172a'))
+print(from_hex('95c6bb9b6a1c3835f98cc56087a03e82') == result)
 ```
 
 For more usage examples please refer to tests.
