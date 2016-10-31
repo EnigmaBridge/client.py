@@ -221,7 +221,7 @@ class CreateUO:
 
     @staticmethod
     def import_object(configuration, tpl):
-        data = {}
+        data = dict()
         data['objectid'] = tpl.object_id
         data['importkey'] = tpl.import_key['id']
         data['object'] = to_hex(tpl.tpl)
@@ -247,9 +247,9 @@ class CreateUO:
         Returns usable uo - you may call ProcessData with it.
         """
         if import_resp is None \
-            or import_resp.response is None \
-            or 'result' not in import_resp.response \
-            or 'handle' not in import_resp.response['result']:
+                or import_resp.response is None \
+                or 'result' not in import_resp.response \
+                or 'handle' not in import_resp.response['result']:
             logger.info('Invalid result: %s', import_resp)
             raise InvalidResponse('Invalid import result')
 
@@ -368,7 +368,7 @@ class TemplateProcessor(object):
 
     def fill_in_keys(self):
         if self.keys is None:
-            self.keys = {}
+            self.keys = dict()
 
         # Generate comm keys if not present
         if KeyTypes.COMM_ENC not in self.keys:
