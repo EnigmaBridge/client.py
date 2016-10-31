@@ -242,7 +242,9 @@ class CreateUO:
     @staticmethod
     def build_imported_object(configuration, tpl_import_req, import_resp):
         """
-        Builds uo from the imported object
+        Builds uo from the imported object to the EB.
+        Imported object = result of CreateUserObject call in EB.
+        Returns usable uo - you may call ProcessData with it.
         """
         if import_resp is None \
             or import_resp.response is None \

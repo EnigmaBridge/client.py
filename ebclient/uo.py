@@ -13,6 +13,9 @@ logger = logging.getLogger(__name__)
 
 
 class UO(object):
+    """
+    User object representation.
+    """
     def __init__(self, uo_id=-1, uo_type=-1, enc_key=None, mac_key=None, api_key=None, endpoint=None, configuration=None, *args, **kwargs):
         self.uo_id = uo_id
         self.uo_type = uo_type
