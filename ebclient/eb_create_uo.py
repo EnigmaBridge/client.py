@@ -366,19 +366,24 @@ class TemplateProcessor(object):
                 or 'objectid' not in response['result']:
             raise InvalidResponse('Invalid template object')
 
+    @staticmethod
+    def generate_comm_keys_if_not_present(keys):
+        if KeyTypes.COMM_ENC not in keys:
+            keys[KeyTypes.COMM_ENC] = TemplateKey(type=KeyTypes.COMM_ENC, key=get_random_vector(EBConsts.COMM_ENC_KEY_LENGTH))
+        if KeyTypes.COMM_MAC not in keys:
+            keys[KeyTypes.COMM_MAC] = TemplateKey(type=KeyTypes.COMM_MAC, key=get_random_vector(EBConsts.COMM_MAC_KEY_LENGTH))
+        if KeyTypes.COMM_ENC_NEXT not in keys:
+            keys[KeyTypes.COMM_ENC_NEXT] = TemplateKey(type=KeyTypes.COMM_ENC_NEXT, key=get_random_vector(EBConsts.COMM_ENC_KEY_LENGTH))
+        if KeyTypes.COMM_MAC_NEXT not in keys:
+            keys[KeyTypes.COMM_MAC_NEXT] = TemplateKey(type=KeyTypes.COMM_MAC_NEXT, key=get_random_vector(EBConsts.COMM_MAC_KEY_LENGTH))
+        return keys
+
     def fill_in_keys(self):
         if self.keys is None:
             self.keys = dict()
 
         # Generate comm keys if not present
-        if KeyTypes.COMM_ENC not in self.keys:
-            self.keys[KeyTypes.COMM_ENC] = TemplateKey(type=KeyTypes.COMM_ENC, key=get_random_vector(EBConsts.COMM_ENC_KEY_LENGTH))
-        if KeyTypes.COMM_MAC not in self.keys:
-            self.keys[KeyTypes.COMM_MAC] = TemplateKey(type=KeyTypes.COMM_MAC, key=get_random_vector(EBConsts.COMM_MAC_KEY_LENGTH))
-        if KeyTypes.COMM_ENC_NEXT not in self.keys:
-            self.keys[KeyTypes.COMM_ENC_NEXT] = TemplateKey(type=KeyTypes.COMM_ENC_NEXT, key=get_random_vector(EBConsts.COMM_ENC_KEY_LENGTH))
-        if KeyTypes.COMM_MAC_NEXT not in self.keys:
-            self.keys[KeyTypes.COMM_MAC_NEXT] = TemplateKey(type=KeyTypes.COMM_MAC_NEXT, key=get_random_vector(EBConsts.COMM_MAC_KEY_LENGTH))
+        TemplateProcessor.generate_comm_keys_if_not_present(self.keys)
 
         tpl = self.template
         key_offsets = tpl['keyoffsets']
