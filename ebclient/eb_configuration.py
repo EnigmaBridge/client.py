@@ -71,7 +71,7 @@ class Configuration(object):
         # Main endpoints
         self.endpoint_process = Endpoint.url('https://site2.enigmabridge.com:11180')
         self.endpoint_enroll = Endpoint.url('https://site2.enigmabridge.com:11182')
-        self.endpoint_register = Endpoint.url('https://hut3.enigmabridge.com:8445')
+        self.endpoint_register = Endpoint.url('https://hut6.enigmabridge.com:8445')
 
         # Request configuration - retry + parameters
         self.api_key = 'API_TEST'
@@ -79,5 +79,5 @@ class Configuration(object):
         self.method = EBConsts.METHOD_REST
         self.timeout = 90000
         self.retry = SimpleRetry()
-        self.create_tpl = dict() # CreateUO template
+        self.create_tpl = dict()  # CreateUO template
 
