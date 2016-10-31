@@ -35,7 +35,7 @@ result = pd.call(from_hex('6bc1bee22e409f96e93d7e117393172a'))
 print(from_hex('95c6bb9b6a1c3835f98cc56087a03e82') == result)
 ```
 
-For more usage examples please refer to tests.
+For more usage examples please refer to tests and our [API documentation].
 
 ## Dependencies
 
@@ -96,4 +96,4 @@ pip install --user cryptography
 
 [100-named-groups]: https://community.letsencrypt.org/t/certbot-auto-fails-while-setting-up-virtual-environment-complains-about-package-hashes/20529/18
 [Enigma Bridge]: https://www.enigmabridge.com
-
+[API documentation]: https://api.enigmabridge.com/api/?python
