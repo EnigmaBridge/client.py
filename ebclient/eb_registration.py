@@ -138,6 +138,36 @@ class BaseRegistrationRequest(object):
         return self.request
 
 
+class GetClientAuthRequest(BaseRegistrationRequest):
+    """
+    This is a simple API call that returns the type of authentication required for a particular client type.
+    """
+    def __init__(self, client_data=None, env=None, config=None, *args, **kwargs):
+        super(GetClientAuthRequest, self).__init__(
+            client_data=client_data,
+            env=env,
+            operation=EBConsts.REQUEST_GET_AUTH,
+            config=config)
+
+
+class InitClientAuthRequest(BaseRegistrationRequest):
+    """
+    If registration of a new client requires the server to provide or initialize an authentication process,
+    this API call will provide the server with all the necessary information.
+
+    Response can be two-fold:
+        - input for creating authentication data, if any;
+        - requesting the server to use an alternative communication channel to provide the requestor with data out-of-band
+    """
+
+    def __init__(self, client_data=None, env=None, config=None, *args, **kwargs):
+        super(InitClientAuthRequest, self).__init__(
+            client_data=client_data,
+            env=env,
+            operation=EBConsts.REQUEST_INIT_AUTH,
+            config=config)
+
+
 class RegistrationRequest(BaseRegistrationRequest):
     """
     Class handles registration requests with the EB API
@@ -180,6 +210,19 @@ class ShowApiRequest(BaseRegistrationRequest):
             config=config)
 
 
+class ListOperationsRequest(BaseRegistrationRequest):
+    """
+    Lists allowed operations for the API key. Returns template requests for createUO.
+    """
+    def __init__(self, api_data=None, env=None, config=None, *args, **kwargs):
+        super(ListOperationsRequest, self).__init__(
+            api_data=api_data,
+            env=env,
+            operation=EBConsts.REQUEST_LIST_OPERATIONS,
+            config=config,
+            url_suffix=self.API_KEY_SUFFIX)
+
+
 class EnrolDomainRequest(BaseRegistrationRequest):
     """
     Enrol a new domain name
@@ -217,4 +260,36 @@ class UpdateDomainRequest(BaseRegistrationRequest):
             operation=EBConsts.REQUEST_UPDATE_DOMAIN,
             config=config,
             url_suffix=self.API_KEY_SUFFIX)
+
+
+class InstallStatusRequest(BaseRegistrationRequest):
+    """
+    Get challenge for domain update
+    """
+    def __init__(self, api_data=None, status_data=None, env=None, config=None, *args, **kwargs):
+        super(InstallStatusRequest, self).__init__(
+            api_data=api_data,
+            env=env,
+            operation=EBConsts.REQUEST_INSTALL_STATUS,
+            config=config,
+            url_suffix=self.API_KEY_SUFFIX)
+
+        if status_data is not None:
+            if self.aux_data is None:
+                self.aux_data = {}
+            self.aux_data['statusdata'] = status_data
+
+
+class UnlockDomainRequest(BaseRegistrationRequest):
+    """
+    Get challenge for domain update
+    """
+    def __init__(self, api_data=None, env=None, config=None, *args, **kwargs):
+        super(UnlockDomainRequest, self).__init__(
+            api_data=api_data,
+            env=env,
+            operation=EBConsts.REQUEST_UNLOCK_DOMAIN,
+            config=config,
+            url_suffix=self.API_KEY_SUFFIX)
+
 
