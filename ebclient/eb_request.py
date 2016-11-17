@@ -175,7 +175,8 @@ class RequestCall(object):
             self.response.status = self.field_to_long(json['status'])
             if self.response.status != EBConsts.STATUS_OK:
                 txt_status = self.get_text_status(json)
-                raise InvalidStatus('Status is %s' % (txt_status if txt_status is not None else ""))
+                raise InvalidStatus('Status is %s (%04X)'
+                                    % (txt_status if txt_status is not None else "", self.response.status))
 
             if self.response_checker is not None:
                 self.response_checker(self.response)
