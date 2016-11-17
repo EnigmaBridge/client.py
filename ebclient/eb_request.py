@@ -146,7 +146,7 @@ class RequestCall(object):
             raise Error('Not implemented yet, only REST POST method is allowed')
 
         url = self.request.url if self.request.url is not None else self.build_url()
-        logger.info("URL to call: %s", url)
+        logger.debug("URL to call: %s", url)
 
         # Do the request
         resp = requests.post(url, json=self.request.body, timeout=config.timeout, headers=self.request.headers)
