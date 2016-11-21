@@ -71,7 +71,7 @@ pip install cryptography
 You may need to install some deps for the python packages
 
 ```
-yum install gcc g++ openssl-devel libffi-devel
+yum install gcc g++ openssl-devel libffi-devel python-devel
 ```
 
 ### SNI on Python < 2.7.9
