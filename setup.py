@@ -3,7 +3,7 @@ import sys
 from setuptools import setup
 from setuptools import find_packages
 
-version = '0.1.15'
+version = '0.1.16'
 
 # Please update tox.ini when modifying dependency version requirements
 install_requires = [
@@ -53,7 +53,8 @@ setup(
     url='https://enigmabridge.com',
     author="Enigma Bridge",
     author_email='info@enigmabridge.com',
-    license='MIT',
+    license=open('LICENSE').read(),
+    long_description=open('README.rst').read(),
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
