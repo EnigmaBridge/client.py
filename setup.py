@@ -3,7 +3,7 @@ import sys
 from setuptools import setup
 from setuptools import find_packages
 
-version = '0.1.16'
+version = '0.1.17'
 
 # Please update tox.ini when modifying dependency version requirements
 install_requires = [
@@ -50,7 +50,7 @@ setup(
     name='ebclient.py',
     version=version,
     description='EnigmaBridge Python Client',
-    url='https://enigmabridge.com',
+    url='https://github.com/EnigmaBridge/client.py',
     author="Enigma Bridge",
     author_email='info@enigmabridge.com',
     license=open('LICENSE').read(),
