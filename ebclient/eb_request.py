@@ -70,7 +70,7 @@ class RequestCall(object):
 
         retry = self.request.configuration.retry
         if not isinstance(retry, SimpleRetry):
-            raise Error('Currently only the fast retry is supported')
+            raise Error('Currently only the fast retry strategy is supported')
 
         last_exception = None
         for i in range(0, retry.max_retry):
@@ -82,10 +82,14 @@ class RequestCall(object):
                 return self.response
 
             except Exception as ex:
-                last_exception = ex
-                logger.debug("Request %d failed, exceptionL %s", i, ex)
+                last_exception = RequestFailed(message='Request failed', cause=ex)
+                logger.debug("Request %d failed, exception: %s" % (i, ex))
 
-        raise RequestFailed(last_exception)
+                # Last exception - throw it here to have a stack
+                if i+1 == retry.max_retry:
+                    raise last_exception
+
+        raise last_exception
 
     @staticmethod
     def field_to_long(value):

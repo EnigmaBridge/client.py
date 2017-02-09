@@ -5,6 +5,7 @@ from ebclient.eb_request import RequestCall, RequestHolder
 from ebclient.eb_utils import EBUtils
 from errors import *
 from registration import *
+import traceback
 import requests
 
 
@@ -52,7 +53,7 @@ class BaseRegistrationRequest(object):
         try:
             return self.call(client_data, api_data, aux_data, *args, **kwargs)
         except Exception as e:
-            self.last_exception = e
+            self.last_exception = RequestFailed(cause=e)
         return None
 
     def call(self, client_data=None, api_data=None, aux_data=None, *args, **kwargs):
@@ -82,7 +83,8 @@ class BaseRegistrationRequest(object):
             return self.response.response['response']
 
         except Exception as e:
-            logger.info("Exception throw %s", e)
+            logger.debug('Exception traceback: %s' % traceback.format_exc())
+            logger.info('Exception thrown %s' % e)
             raise
         pass
 
