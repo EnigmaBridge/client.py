@@ -1,6 +1,7 @@
 import logging
 from eb_utils import EBUtils
 from eb_consts import EBConsts
+from eb_configuration import SimpleRetry
 from crypto_util import *
 from errors import *
 from uo import *
