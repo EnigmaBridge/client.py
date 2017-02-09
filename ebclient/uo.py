@@ -42,6 +42,15 @@ class UO(object):
         else:
             return None
 
+    def __repr__(self):
+        return '%s(uo_id=%r, uo_type=%r, enc_key=%r, mac_key=%r, api_key=%r, endpoint=%r, configuration=%r)' \
+               % (self.__class__, self.uo_id, self.uo_type, self.enc_key, self.mac_key, self.api_key, self.endpoint,
+                  self.configuration)
+
+    def __str__(self):
+        return 'UO(uo_id=%r, uo_type=%r, api_key=%r, endpoint=%r)' \
+               % (self.uo_id, self.uo_type, self.api_key, self.endpoint)
+
 
 class RSAPrivateKey(object):
     """

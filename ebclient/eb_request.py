@@ -16,27 +16,34 @@ class RequestHolder(object):
     """
     Class holding the general request
     """
-    def __init__(self, body=None, api_object=None, nonce=None, endpoint=None, config=None, *args, **kwargs):
+    def __init__(self, body=None, api_object=None, nonce=None, endpoint=None, config=None, url=None, headers=None,
+                 *args, **kwargs):
         self.body = body
         self.api_object = api_object
         self.api_method = 'ProcessData'
         self.nonce = nonce
         self.endpoint = endpoint
         self.configuration = config
-        self.url = None
-        self.headers = None
-        pass
+        self.url = url
+        self.headers = headers
+
+    def __repr__(self):
+        return '%s(body=%r, api_object=%r, api_method=%r, nonce=%r, endpoint=%r, config=%r, ' \
+               'url=%r, headers=%r' \
+               % (self.__class__, self.body, self.api_object, self.api_method, self.nonce, self.endpoint,
+                  self.configuration, self.url, self.headers)
 
 
 class ResponseHolder(object):
     """
     Class holding the general response
     """
-    def __init__(self, *args, **kwargs):
-        self.response = None
-        self.status = 0x0
-        pass
-    pass
+    def __init__(self, response=None, status=0x0, *args, **kwargs):
+        self.response = response
+        self.status = status
+
+    def __repr__(self):
+        return '%s(response=%r, status=%r)' % (self.__class__, self.response, self.status)
 
 
 class RequestCall(object):
@@ -187,3 +194,8 @@ class RequestCall(object):
             # If response code is not ok (200), print the resulting http error code with description
             resp.raise_for_status()
         pass
+
+    def __repr__(self):
+        return '%s(request=%r, response_checker=%r, response=%r, last_resp=%r)' \
+               % (self.__class__, self.request, self.response_checker, self.response, self.last_resp)
+

@@ -4,6 +4,7 @@ import time
 from eb_consts import EBConsts
 from crypto_util import *
 from py3compat import *
+from eb_utils import EBUtils
 
 __author__ = 'dusanklinec'
 
@@ -25,7 +26,7 @@ class Endpoint(object):
     def url(cls, url):
         o = parse_url(url)
         hostport = o.netloc if o.netloc is not None and len(o.netloc) > 0 else cls.DEFAULT_HOST
-        matchObj = re.match( r'^(.+?):([0-9]+)$', hostport, re.M | re.I)
+        matchObj = re.match(r'^(.+?):([0-9]+)$', hostport, re.M | re.I)
         host = ''
         port = cls.DEFAULT_PORT
 
@@ -42,6 +43,12 @@ class Endpoint(object):
             self.host if self.host is not None else self.DEFAULT_HOST,
             self.port if self.port is not None else self.DEFAULT_PORT
         )
+
+    def __repr__(self):
+        return '%s(scheme=%r, host=%r, port=%r)' % (self.__class__, self.scheme, self.host, self.port)
+
+    def __str__(self):
+        return self.get_url()
 
 
 class Retry(object):
@@ -61,23 +68,36 @@ class SimpleRetry(Retry):
         sleep_time = self.gen_jitter()/1000.0
         time.sleep(sleep_time)
 
+    def __repr__(self):
+        return '%s(max_retry=%r, jitter_base=%r, jitter_rand=%r)' \
+               % (self.__class__, self.max_retry, self.jitter_base, self.jitter_rand)
+
 
 class BackoffRetry(Retry):
     pass
 
 
 class Configuration(object):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, endpoint_process=None, endpoint_enroll=None, endpoint_register=None,
+                 api_key=None, http_method=None, method=None, timeout=None, retry=None, create_tpl=None,
+                 *args, **kwargs):
+
         # Main endpoints
-        self.endpoint_process = Endpoint.url('https://site2.enigmabridge.com:11180')
-        self.endpoint_enroll = Endpoint.url('https://site2.enigmabridge.com:11182')
-        self.endpoint_register = Endpoint.url('https://hut6.enigmabridge.com:8445')
+        self.endpoint_process = EBUtils.defval(endpoint_process, Endpoint.url('https://site2.enigmabridge.com:11180'))
+        self.endpoint_enroll = EBUtils.defval(endpoint_enroll, Endpoint.url('https://site2.enigmabridge.com:11182'))
+        self.endpoint_register = EBUtils.defval(endpoint_register, Endpoint.url('https://hut6.enigmabridge.com:8445'))
 
         # Request configuration - retry + parameters
-        self.api_key = 'API_TEST'
-        self.http_method = EBConsts.HTTP_METHOD_POST
-        self.method = EBConsts.METHOD_REST
-        self.timeout = 90000
-        self.retry = SimpleRetry()
-        self.create_tpl = dict()  # CreateUO template
+        self.api_key = EBUtils.defval(api_key, 'API_TEST')
+        self.http_method = EBUtils.defval(http_method, EBConsts.HTTP_METHOD_POST)
+        self.method = EBUtils.defval(method, EBConsts.METHOD_REST)
+        self.timeout = EBUtils.defval(timeout, 90000)
+        self.retry = EBUtils.defval(retry, SimpleRetry())
+        self.create_tpl = EBUtils.defval(create_tpl, dict())  # CreateUO template
+
+    def __repr__(self):
+        return '%s(endpoint_process=%r, endpoint_enroll=%r, endpoint_register=%r, api_key=%r, http_method=%r, ' \
+               'method=%r, timeout=%r, retry=%r, create_tpl=%r)' \
+               % (self.__class__, self.endpoint_process, self.endpoint_enroll, self.endpoint_register, self.api_key,
+                  self.http_method, self.method, self.timeout, self.retry, self.create_tpl)
 
