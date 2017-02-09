@@ -58,7 +58,9 @@ class BaseRegistrationRequest(object):
     def call(self, client_data=None, api_data=None, aux_data=None, *args, **kwargs):
         """
         Calls the request with input data using given configuration (retry, timeout, ...).
-        :param input_data:
+        :param client_data:
+        :param api_data:
+        :param aux_data:
         :param args:
         :param kwargs:
         :return:
@@ -95,6 +97,8 @@ class BaseRegistrationRequest(object):
         Builds request
 
         :param input_data:
+        :param api_data:
+        :param aux_data:
         :param args:
         :param kwargs:
         :return:
