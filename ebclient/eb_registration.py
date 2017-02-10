@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import logging
 from ebclient.eb_consts import EBConsts
 from ebclient.crypto_util import *

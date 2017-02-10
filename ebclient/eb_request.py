@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import logging
 from eb_utils import EBUtils
 from eb_consts import EBConsts

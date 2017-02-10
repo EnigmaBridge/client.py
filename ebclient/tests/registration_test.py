@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from ebclient.eb_registration import *
 from ebclient.registration import *
 from ebclient.uo import Configuration, Endpoint, SimpleRetry, UO

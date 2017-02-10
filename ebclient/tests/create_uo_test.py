@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from ebclient.process_data import ProcessData
 from ebclient.create_uo import TemplateFields, KeyTypes, Environment, Gen
 from ebclient.eb_create_uo import *

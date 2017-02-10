@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from ebclient.process_data import ProcessData
 from ebclient.uo import Configuration, Endpoint, SimpleRetry, UO
 from ebclient.crypto_util import *

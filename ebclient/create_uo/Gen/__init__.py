@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """Key generation constants"""
 LEGACY_RANDOM = 0
 CLIENT = 1
