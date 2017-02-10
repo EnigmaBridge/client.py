@@ -4,7 +4,7 @@ import time
 from eb_consts import EBConsts
 from crypto_util import *
 from py3compat import *
-from eb_utils import EBUtils
+from eb_base_utils import EBBaseUtils as bu
 
 __author__ = 'dusanklinec'
 
@@ -83,17 +83,17 @@ class Configuration(object):
                  *args, **kwargs):
 
         # Main endpoints
-        self.endpoint_process = EBUtils.defval(endpoint_process, Endpoint.url('https://site2.enigmabridge.com:11180'))
-        self.endpoint_enroll = EBUtils.defval(endpoint_enroll, Endpoint.url('https://site2.enigmabridge.com:11182'))
-        self.endpoint_register = EBUtils.defval(endpoint_register, Endpoint.url('https://hut6.enigmabridge.com:8445'))
+        self.endpoint_process = bu.defval(endpoint_process, Endpoint.url('https://site2.enigmabridge.com:11180'))
+        self.endpoint_enroll = bu.defval(endpoint_enroll, Endpoint.url('https://site2.enigmabridge.com:11182'))
+        self.endpoint_register = bu.defval(endpoint_register, Endpoint.url('https://hut6.enigmabridge.com:8445'))
 
         # Request configuration - retry + parameters
-        self.api_key = EBUtils.defval(api_key, 'API_TEST')
-        self.http_method = EBUtils.defval(http_method, EBConsts.HTTP_METHOD_POST)
-        self.method = EBUtils.defval(method, EBConsts.METHOD_REST)
-        self.timeout = EBUtils.defval(timeout, 90000)
-        self.retry = EBUtils.defval(retry, SimpleRetry())
-        self.create_tpl = EBUtils.defval(create_tpl, dict())  # CreateUO template
+        self.api_key = bu.defval(api_key, 'API_TEST')
+        self.http_method = bu.defval(http_method, EBConsts.HTTP_METHOD_POST)
+        self.method = bu.defval(method, EBConsts.METHOD_REST)
+        self.timeout = bu.defval(timeout, 90000)
+        self.retry = bu.defval(retry, SimpleRetry())
+        self.create_tpl = bu.defval(create_tpl, dict())  # CreateUO template
 
     def __repr__(self):
         return '%s(endpoint_process=%r, endpoint_enroll=%r, endpoint_register=%r, api_key=%r, http_method=%r, ' \
