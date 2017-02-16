@@ -37,16 +37,17 @@ class Error(Exception):
         self.traceback_formatted = None
         self.traceback = None
 
-        self.load(cause)
+        self.load(cause, do_message=False)
 
-    def load(self, cause=None):
+    def load(self, cause=None, do_message=True):
         """
         Loads exception data from the current exception frame - should be called inside the except block
         :return:
         """
         if cause is not None:
             self.cause = cause
-            self.message = error_message(self, self.base_message, cause)
+            if do_message:
+                self.message = error_message(self, self.base_message, cause)
 
         self.exc_type, self.exc_value, self.exc_traceback = sys.exc_info()
         self.traceback_formatted = traceback.format_exc()
@@ -56,25 +57,22 @@ class Error(Exception):
 class CryptoError(Error):
     """MAC invalid, ..."""
     def __init__(self, message=None, cause=None):
-        super(CryptoError, self).__init__(error_message(self, message, cause))
+        super(CryptoError, self).__init__(message=message, cause=cause)
 
 
 class InvalidResponse(Error):
     """Invalid server response"""
     def __init__(self, message=None, cause=None):
-        super(InvalidResponse, self).__init__(error_message(self, message, cause))
+        super(InvalidResponse, self).__init__(message=message, cause=cause)
 
 
 class InvalidStatus(Error):
     """Invalid server response"""
     def __init__(self, message=None, cause=None):
-        super(InvalidStatus, self).__init__(error_message(self, message, cause))
+        super(InvalidStatus, self).__init__(message=message, cause=cause)
 
 
 class RequestFailed(Error):
     """API request failed"""
     def __init__(self, message=None, cause=None):
-        super(RequestFailed, self).__init__(error_message(self, message, cause))
-
-
-
+        super(RequestFailed, self).__init__(message=message, cause=cause)
