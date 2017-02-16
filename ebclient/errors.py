@@ -55,25 +55,25 @@ class Error(Exception):
 
 class CryptoError(Error):
     """MAC invalid, ..."""
-    def __init__(self, message, cause=None):
+    def __init__(self, message=None, cause=None):
         super(CryptoError, self).__init__(error_message(self, message, cause))
 
 
 class InvalidResponse(Error):
     """Invalid server response"""
-    def __init__(self, message, cause=None):
+    def __init__(self, message=None, cause=None):
         super(InvalidResponse, self).__init__(error_message(self, message, cause))
 
 
 class InvalidStatus(Error):
     """Invalid server response"""
-    def __init__(self, message, cause=None):
+    def __init__(self, message=None, cause=None):
         super(InvalidStatus, self).__init__(error_message(self, message, cause))
 
 
 class RequestFailed(Error):
     """API request failed"""
-    def __init__(self, message, cause=None):
+    def __init__(self, message=None, cause=None):
         super(RequestFailed, self).__init__(error_message(self, message, cause))
 
 
