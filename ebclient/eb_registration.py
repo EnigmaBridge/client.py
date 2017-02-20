@@ -260,7 +260,7 @@ class GetDomainChallengeRequest(BaseRegistrationRequest):
 
 class UpdateDomainRequest(BaseRegistrationRequest):
     """
-    Get challenge for domain update
+    Updates domain records
     """
     def __init__(self, api_data=None, env=None, config=None, *args, **kwargs):
         super(UpdateDomainRequest, self).__init__(
@@ -273,7 +273,7 @@ class UpdateDomainRequest(BaseRegistrationRequest):
 
 class InstallStatusRequest(BaseRegistrationRequest):
     """
-    Get challenge for domain update
+    Submit installation status to the EB server.
     """
     def __init__(self, api_data=None, status_data=None, env=None, config=None, *args, **kwargs):
         super(InstallStatusRequest, self).__init__(
@@ -301,4 +301,26 @@ class UnlockDomainRequest(BaseRegistrationRequest):
             config=config,
             url_suffix=self.API_KEY_SUFFIX)
 
+
+class SendLogRequest(BaseRegistrationRequest):
+    """
+    Submit audit log for analysis to the EB.
+    """
+    def __init__(self, api_data=None, effort=None, log=None, env=None, config=None, *args, **kwargs):
+        super(SendLogRequest, self).__init__(
+            api_data=api_data,
+            env=env,
+            operation=EBConsts.REQUEST_SEND_LOGS,
+            config=config,
+            url_suffix=self.API_KEY_SUFFIX)
+
+        if effort is not None:
+            if self.aux_data is None:
+                self.aux_data = {}
+            self.aux_data['effort'] = effort
+
+        if log is not None:
+            if self.aux_data is None:
+                self.aux_data = {}
+            self.aux_data['log'] = log
 
