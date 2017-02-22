@@ -324,3 +324,16 @@ class SendLogRequest(BaseRegistrationRequest):
                 self.aux_data = {}
             self.aux_data['log'] = log
 
+
+class GetPublicIPRequest(BaseRegistrationRequest):
+    """
+    Requests public IP address as EB server sees it.
+    """
+    def __init__(self, env=None, config=None, *args, **kwargs):
+        super(GetPublicIPRequest, self).__init__(
+            api_data=None,
+            env=env,
+            operation=EBConsts.REQUEST_CLIENT_IP,
+            config=config,
+            url_suffix=self.API_KEY_SUFFIX)
+
