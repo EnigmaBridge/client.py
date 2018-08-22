@@ -3,14 +3,14 @@ import sys
 from setuptools import setup
 from setuptools import find_packages
 
-version = '1.1.9'
+version = '1.1.14'
 
 # Please update tox.ini when modifying dependency version requirements
 install_requires = [
     'pycrypto>=2.6',
     'requests',
     'setuptools>=1.0',
-    'six', 'Crypto'
+    'six', 'Crypto', 'future'
 ]
 
 # TLS SNI for older python
@@ -30,8 +30,6 @@ if sys.version_info < (2, 7):
         'mock<1.1.0',
     ])
 else:
-    if sys.version_info >= (3, 0):
-        'past'
     install_requires.append('mock')
 
 

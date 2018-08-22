@@ -2,15 +2,16 @@
 # -*- coding: utf-8 -*-
 
 from ebclient.process_data import ProcessData
-from ebclient.create_uo import TemplateFields, KeyTypes, Environment, Gen
+# from ebclient.create_uo import KeyTypes, Environment, Gen
+from ebclient.create_uo import TemplateFields
 from ebclient.eb_create_uo import *
-from ebclient.uo import Configuration, Endpoint, SimpleRetry, UO
-from ebclient.crypto_util import *
+from ebclient.uo import Configuration, Endpoint, SimpleRetry
+# from ebclient.uo import UO
+# from ebclient.crypto_util import *
 import unittest
 # import mock
 # import sys
 # import six
-
 
 __author__ = 'Enigma Bridge Ltd'
 
@@ -40,10 +41,10 @@ class CreateUOTest(unittest.TestCase):
         # Process data - try to decrypt one.
         pd = ProcessData(uo=rsa_key.uo, config=self.cfg)
 
-        input = ("\x00"*127) + "\x01"
-        result = pd.call(input)
-        self.assertEqual(input, result, "Result does not match")
+        data_in = ("\x00"*127) + "\x01"
+        result = pd.call(data_in)
+        self.assertEqual(data_in, result, "Result does not match")
+
 
 if __name__ == "__main__":
     unittest.main()  # pragma: no cover
-

@@ -3,7 +3,7 @@
 
 from ebclient.eb_registration import *
 from ebclient.registration import *
-from ebclient.uo import Configuration, Endpoint, SimpleRetry, UO
+from ebclient.uo import Configuration, Endpoint, SimpleRetry
 from ebclient.crypto_util import *
 import unittest
 import json

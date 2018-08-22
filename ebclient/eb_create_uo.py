@@ -79,7 +79,8 @@ class CreateUO:
         self.import_resp = CreateUO.import_object(configuration=self.configuration, tpl=tpl_req)
 
         # Build UO
-        uo = CreateUO.build_imported_object(configuration=self.configuration, tpl_import_req=tpl_req, import_resp=self.import_resp)
+        uo = CreateUO.build_imported_object(configuration=self.configuration, tpl_import_req=tpl_req,
+                                            import_resp=self.import_resp)
         return uo
 
     def create_rsa(self, bits, configuration=None, tpl=None):
@@ -111,15 +112,21 @@ class CreateUO:
         return {
             "format": 1,
             "protocol": 1,
-            "environment": Environment.DEV,  # shows whether the UO should be for production (live), test (pre-production testing), or dev (development)
+            "environment": Environment.DEV,  # shows whether the UO should be for production (live),
+                                             # test (pre-production testing), or dev (development)
             "maxtps": "one",  # maximum guaranteed TPS
             "core": "empty",  # how many cards have UO loaded permanently
-            "persistence": "one_minute",  # once loaded onto card, how long will the UO stay there without use (this excludes the "core")
-            "priority": "default",  # this defines a) priority when the server capacity is fully utilised and it also defines how quickly new copies of UO are installed (pre-empting icreasing demand)
+            "persistence": "one_minute",  # once loaded onto card, how long will the UO stay there without use
+                                          # (this excludes the "core")
+            "priority": "default",  # this defines a) priority when the server capacity is fully utilised and it also
+                                    # defines how quickly new copies of UO are installed (pre-empting icreasing demand)
             "separation": "time",  # "complete" = only one UO can be loaded on a smartcard at one one time
-            "bcr": TemplateFields.yes,  # "yes" will ensure the UO is replicated to provide high availability for any possible service disruption
-            "unlimited": TemplateFields.yes,  #  if "yes", we expect the data starts with an IV to initialize decryption of data - this is for communication security
-            "clientiv": TemplateFields.yes,  # if "yes", we expect the data starting with a diversification 16B for communication keys
+            "bcr": TemplateFields.yes,  # "yes" will ensure the UO is replicated to provide high availability for any
+                                        # possible service disruption
+            "unlimited": TemplateFields.yes,  #  if "yes", we expect the data starts with an IV to initialize decryption
+                                              #  of data - this is for communication security
+            "clientiv": TemplateFields.yes,  # if "yes", we expect the data starting with a diversification 16B for
+                                             # communication keys
             "clientdiv": TemplateFields.no,
             "resource": "global",
             "credit": 32677,  # <1-32767>, a limit a seed card can provide to the EB service
@@ -306,8 +313,8 @@ class TemplateKey(object):
     """
     Simple class represents key to be set to the template
     """
-    def __init__(self, type=None, key=None, *args, **kwargs):
-        self.type = type
+    def __init__(self, key_type=None, key=None, *args, **kwargs):
+        self.type = key_type
         self.key = key
 
 
@@ -393,13 +400,13 @@ class TemplateProcessor(object):
     @staticmethod
     def generate_comm_keys_if_not_present(keys):
         if KeyTypes.COMM_ENC not in keys:
-            keys[KeyTypes.COMM_ENC] = TemplateKey(type=KeyTypes.COMM_ENC, key=get_random_vector(EBConsts.COMM_ENC_KEY_LENGTH))
+            keys[KeyTypes.COMM_ENC] = TemplateKey(key_type=KeyTypes.COMM_ENC, key=get_random_vector(EBConsts.COMM_ENC_KEY_LENGTH))
         if KeyTypes.COMM_MAC not in keys:
-            keys[KeyTypes.COMM_MAC] = TemplateKey(type=KeyTypes.COMM_MAC, key=get_random_vector(EBConsts.COMM_MAC_KEY_LENGTH))
+            keys[KeyTypes.COMM_MAC] = TemplateKey(key_type=KeyTypes.COMM_MAC, key=get_random_vector(EBConsts.COMM_MAC_KEY_LENGTH))
         if KeyTypes.COMM_ENC_NEXT not in keys:
-            keys[KeyTypes.COMM_ENC_NEXT] = TemplateKey(type=KeyTypes.COMM_ENC_NEXT, key=get_random_vector(EBConsts.COMM_ENC_KEY_LENGTH))
+            keys[KeyTypes.COMM_ENC_NEXT] = TemplateKey(key_type=KeyTypes.COMM_ENC_NEXT, key=get_random_vector(EBConsts.COMM_ENC_KEY_LENGTH))
         if KeyTypes.COMM_MAC_NEXT not in keys:
-            keys[KeyTypes.COMM_MAC_NEXT] = TemplateKey(type=KeyTypes.COMM_MAC_NEXT, key=get_random_vector(EBConsts.COMM_MAC_KEY_LENGTH))
+            keys[KeyTypes.COMM_MAC_NEXT] = TemplateKey(key_type=KeyTypes.COMM_MAC_NEXT, key=get_random_vector(EBConsts.COMM_MAC_KEY_LENGTH))
         return keys
 
     def fill_in_keys(self):
@@ -464,6 +471,7 @@ class TemplateProcessor(object):
         Encrypts current tpl_buf according to the protocol - symmetric encryption
         :param enc_key:
         :param mac_key:
+        :param enc_offset:
         :return:
         """
 

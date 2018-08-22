@@ -4,7 +4,7 @@
 from ebclient.eb_consts import EBConsts
 from ebclient.crypto_util import *
 from ebclient.uo import UO
-if sys.version_info[0] > 2:
+if sys.version_info[0] >= 3:
     from past.builtins import long
 
 __author__ = 'Enigma Bridge Ltd'
@@ -31,7 +31,7 @@ class Switch(object):
         """Indicate whether or not to enter a case suite"""
         if self.fall or not args:
             return True
-        elif self.value in args: # changed for v1.5, see below
+        elif self.value in args:  # changed for v1.5, see below
             self.fall = True
             return True
         else:
@@ -60,17 +60,17 @@ class EBUtils(object):
         return "%s%010x%010x" % (api_key, uo_id, uo_type)
 
     @staticmethod
-    def get_request_type(type):
+    def get_request_type(type_in):
         """
         Constructs request type string for ProcessData packet from the UOtype of UO object
-        :param type:
+        :param type_in:
         :return:
         """
         uo_type = None
-        if isinstance(type, (int, long)):
-            uo_type = int(type)
-        elif isinstance(type, UO):
-            uo_type = type.uo_type
+        if isinstance(type_in, (int, long)):
+            uo_type = int(type_in)
+        elif isinstance(type_in, UO):
+            uo_type = type_in.uo_type
         return EBConsts.REQUEST_TYPES.get(uo_type, 'PROCESS')
 
     @staticmethod
@@ -86,33 +86,38 @@ class EBUtils(object):
         """
         Demangles nonce returned in process data response
         :param nonce:
+        :type nonce: bytes
         :return:
         """
-        return to_bytes([chr((ord(y)-1) & 0xff) for y in nonce])
+        return to_bytes(bytearray(nonce))
 
     @staticmethod
-    def merge(a, b, path=None):
+    def merge(final, update, path=None):
         """
         Deep merges dictionary object b into a.
-        :param a:
-        :param b:
+        :param final:
+        :param update:
+        :param path: 
         :return:
         """
-        if a is None: return None
-        if b is None: return a
+        if final is None:
+            return None
+        if update is None:
+            return final
+        if path is None:
+            path = []
 
-        if path is None: path = []
-        for key in b:
-            if key in a:
-                if isinstance(a[key], dict) and isinstance(b[key], dict):
-                    EBUtils.merge(a[key], b[key], path + [str(key)])
-                elif a[key] == b[key]:
-                    pass # same leaf value
+        for key in update:
+            if key in final:
+                if isinstance(final[key], dict) and isinstance(update[key], dict):
+                    EBUtils.merge(final[key], update[key], path + [str(key)])
+                elif final[key] == update[key]:
+                    pass  # same leaf value
                 else:
                     raise ValueError('Conflict at %s' % '.'.join(path + [str(key)]))
             else:
-                a[key] = b[key]
-        return a
+                final[key] = update[key]
+        return final
 
     @staticmethod
     def update(dest, variation, path=None):
@@ -124,16 +129,19 @@ class EBUtils(object):
         :param path:
         :return:
         """
-        if dest is None: return None
-        if variation is None: return dest
+        if dest is None:
+            return None
+        if variation is None:
+            return dest
+        if path is None:
+            path = []
 
-        if path is None: path = []
         for key in variation:
             if key in dest:
                 if isinstance(dest[key], dict) and isinstance(variation[key], dict):
                     EBUtils.merge(dest[key], variation[key], path + [str(key)])
                 elif dest[key] == variation[key]:
-                    pass # same leaf value
+                    pass  # same leaf value
                 else:
                     dest[key] = variation[key]
             else:

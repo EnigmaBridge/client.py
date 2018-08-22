@@ -16,6 +16,7 @@ import sys
 if sys.version_info[0] > 2:
     from past.builtins import basestring
     from past.builtins import long
+    from past.builtins import xrange
 
 from Crypto import Random
 from Crypto.Cipher import AES
