@@ -356,7 +356,7 @@ class TemplateProcessor(object):
         # Encrypt the template - symmetric encryption
         tpl_enc_key = get_random_vector(EBConsts.TPL_ENC_KEY_LENGTH)
         tpl_mac_key = get_random_vector(EBConsts.TPL_MAC_KEY_LENGTH)
-        enc_offset = self.template['encryptionoffset']/8
+        enc_offset = self.template['encryptionoffset']//8
         tpl_encrypted = self.encrypt_template(tpl_enc_key, tpl_mac_key, enc_offset)
 
         # Wrap encryption keys with
@@ -430,8 +430,8 @@ class TemplateProcessor(object):
                     continue
 
                 self.tpl_buff = bytes_replace(self.tpl_buff,
-                                              c_off_bits / 8,
-                                              (c_off_bits + c_len_bits) / 8,
+                                              c_off_bits // 8,
+                                              (c_off_bits + c_len_bits) // 8,
                                               c_key.key)
             pass
         pass
@@ -441,7 +441,7 @@ class TemplateProcessor(object):
         Set flags representing generation way accordingly - commkeys are client generated, app key is server generated.
         :return:
         """
-        offset = self.template['flagoffset']/8
+        offset = self.template['flagoffset']//8
 
         # comm keys provided?
         self.tpl_buff = bytes_transform(self.tpl_buff, offset+1, offset+2, lambda x: self.set_flag_bit(x))
