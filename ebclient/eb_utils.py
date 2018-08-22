@@ -139,7 +139,7 @@ class EBUtils(object):
         for key in variation:
             if key in dest:
                 if isinstance(dest[key], dict) and isinstance(variation[key], dict):
-                    EBUtils.merge(dest[key], variation[key], path + [str(key)])
+                    EBUtils.update(dest[key], variation[key], path + [str(key)])
                 elif dest[key] == variation[key]:
                     pass  # same leaf value
                 else:
