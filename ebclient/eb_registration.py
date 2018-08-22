@@ -6,13 +6,13 @@ from ebclient.eb_consts import EBConsts
 from ebclient.crypto_util import *
 from ebclient.eb_request import RequestCall, RequestHolder
 from ebclient.eb_utils import EBUtils
-from errors import *
-from registration import *
+from ebclient.errors import *
+from ebclient.registration import *
 import traceback
 import requests
 
 
-__author__ = 'dusanklinec'
+__author__ = 'Enigma Bridge Ltd'
 
 
 logger = logging.getLogger(__name__)

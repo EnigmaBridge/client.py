@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from eb_utils import EBUtils
-from eb_consts import EBConsts
-from eb_configuration import SimpleRetry
-from crypto_util import *
-from errors import *
-from uo import *
+from ebclient.eb_utils import EBUtils
+from ebclient.eb_consts import EBConsts
+from ebclient.eb_configuration import SimpleRetry
+from ebclient.crypto_util import *
+from ebclient.errors import *
+from ebclient.uo import *
 import requests
 
-__author__ = 'dusanklinec'
+__author__ = 'Enigma Bridge Ltd'
 
 
 logger = logging.getLogger(__name__)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__author__ = 'dusanklinec'
+__author__ = 'Enigma Bridge Ltd'
 
 import sys
 

@@ -23,7 +23,7 @@ from Crypto.Util.number import long_to_bytes, bytes_to_long, size, ceil_div
 logger = logging.getLogger(__name__)
 
 
-__author__ = 'dusanklinec'
+__author__ = 'Enigma Bridge Ltd'
 
 
 #

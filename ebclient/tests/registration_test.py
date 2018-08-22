@@ -9,7 +9,7 @@ import unittest
 import json
 
 
-__author__ = 'dusanklinec'
+__author__ = 'Enigma Bridge Ltd'
 
 
 class RegistrationTest(unittest.TestCase):

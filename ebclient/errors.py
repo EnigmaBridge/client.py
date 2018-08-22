@@ -4,7 +4,7 @@
 import sys
 import traceback
 
-__author__ = 'dusanklinec'
+__author__ = 'Enigma Bridge Ltd'
 
 
 def error_message(e, message=None, cause=None):

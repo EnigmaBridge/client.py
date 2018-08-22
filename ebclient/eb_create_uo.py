@@ -3,21 +3,23 @@
 
 import logging
 import types
-from eb_utils import EBUtils
-from eb_consts import EBConsts
-from eb_request import *
-from uo import *
-from crypto_util import *
-from errors import *
-import json
-from create_uo import Gen
-from create_uo import TemplateFields
-from create_uo import Environment
-from create_uo import KeyTypes
-from eb_consts import UOTypes
 
+from ebclient.eb_configuration import Configuration
+from ebclient.eb_utils import EBUtils
+from ebclient.eb_consts import EBConsts
+from ebclient.eb_request import *
+from ebclient.uo import *
+from ebclient.crypto_util import *
+from ebclient.errors import *
+from ebclient.create_uo import Gen
+from ebclient.create_uo import TemplateFields
+from ebclient.create_uo import Environment
+from ebclient.create_uo import KeyTypes
+from ebclient.eb_consts import UOTypes
 
-__author__ = 'dusanklinec'
+from builtins import int
+
+__author__ = 'Enigma Bridge Ltd'
 
 
 logger = logging.getLogger(__name__)
@@ -169,9 +171,9 @@ class CreateUO:
             spec[TemplateFields.generation] = {}
 
         spec[TemplateFields.generation][TemplateFields.commkey] = \
-            Gen.CLIENT if (obj_type & (1L << TemplateFields.FLAG_COMM_GEN)) > 0 else Gen.LEGACY_RANDOM
+            Gen.CLIENT if (obj_type & (int(1) << TemplateFields.FLAG_COMM_GEN)) > 0 else Gen.LEGACY_RANDOM
         spec[TemplateFields.generation][TemplateFields.appkey] = \
-            Gen.CLIENT if (obj_type & (1L << TemplateFields.FLAG_APP_GEN)) > 0 else Gen.LEGACY_RANDOM
+            Gen.CLIENT if (obj_type & (int(1) << TemplateFields.FLAG_APP_GEN)) > 0 else Gen.LEGACY_RANDOM
         spec[TemplateFields.type] = "%x" % obj_type
         return spec
 
@@ -187,14 +189,14 @@ class CreateUO:
         :return:
         """
         if comm_keys_provided is not None and comm_keys_provided == False:
-            obj_type &= ~(1L << TemplateFields.FLAG_COMM_GEN)
+            obj_type &= ~(int(1) << TemplateFields.FLAG_COMM_GEN)
         elif comm_keys_provided:
-            obj_type |= (1L << TemplateFields.FLAG_COMM_GEN)
+            obj_type |= (int(1) << TemplateFields.FLAG_COMM_GEN)
 
         if app_keys_provided is not None and app_keys_provided == False:
-            obj_type &= ~(1L << TemplateFields.FLAG_APP_GEN)
+            obj_type &= ~(int(1) << TemplateFields.FLAG_APP_GEN)
         elif app_keys_provided:
-            obj_type |= (1L << TemplateFields.FLAG_APP_GEN)
+            obj_type |= (int(1) << TemplateFields.FLAG_APP_GEN)
 
         return obj_type
 

@@ -12,7 +12,7 @@ import unittest
 # import six
 
 
-__author__ = 'dusanklinec'
+__author__ = 'Enigma Bridge Ltd'
 
 
 class CreateUOTest(unittest.TestCase):

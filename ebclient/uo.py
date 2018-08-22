@@ -4,12 +4,12 @@
 import logging
 import re
 import time
-from eb_consts import EBConsts
-from crypto_util import *
-from eb_configuration import *
-from py3compat import *
+from ebclient.eb_consts import EBConsts
+from ebclient.crypto_util import *
+from ebclient.eb_configuration import *
+from ebclient.py3compat import *
 
-__author__ = 'dusanklinec'
+__author__ = 'Enigma Bridge Ltd'
 
 
 logger = logging.getLogger(__name__)

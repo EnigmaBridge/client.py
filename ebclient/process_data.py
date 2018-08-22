@@ -2,14 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from eb_utils import EBUtils
-from eb_consts import EBConsts
-from eb_request import *
-from uo import *
-from crypto_util import *
-from errors import *
+from ebclient.eb_request import *
+from ebclient.uo import *
+from ebclient.crypto_util import *
+from ebclient.errors import *
 
-__author__ = 'dusanklinec'
+__author__ = 'Enigma Bridge Ltd'
 
 
 logger = logging.getLogger(__name__)
@@ -146,4 +144,3 @@ class ProcessData(object):
         self.decrypted = decrypted[5+EBConsts.FRESHNESS_NONCE_LEN:]
         self.decrypted = PKCS7.unpad(self.decrypted)
         return self.response
-
