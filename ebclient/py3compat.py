@@ -5,10 +5,11 @@ __author__ = 'Enigma Bridge Ltd'
 
 import sys
 
-
 if sys.version_info[0] == 2:
     def import_urlparse():
+        # noinspection PyGlobalUndefined
         global urlparse
+        # noinspection PyGlobalUndefined
         from urlparse import urlparse
 
 else:

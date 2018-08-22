@@ -9,6 +9,9 @@ from ebclient.crypto_util import *
 from ebclient.errors import *
 from ebclient.uo import *
 import requests
+if sys.version_info[0] > 2:
+    from past.builtins import basestring    # pip install future
+    from past.builtins import long
 
 __author__ = 'Enigma Bridge Ltd'
 
@@ -103,7 +106,7 @@ class RequestCall(object):
         :param value:
         :return:
         """
-        if isinstance(value, (types.LongType, types.IntType)):
+        if isinstance(value, (int, long)):
             return long(value)
         elif isinstance(value, basestring):
             return bytes_to_long(from_hex(value))

@@ -1,18 +1,20 @@
-`Enigma Bridge <https://www.enigmabridge.com>`__ Python client
-==============================================================
+ `Enigma Bridge <https://www.enigmabridge.com>`__ Python client
+ ==============================================================
 
-With this repo you can use `Enigma
-Bridge <https://www.enigmabridge.com>`__ encryption service.
+With this repo you can use `Enigma Bridge <https://www.enigmabridge.com>`__ encryption service.
 
 Installation
 ------------
 
 .. code:: bash
 
-    pip install ebclient.py
+    pip install ebclient
 
 Usage
 -----
+
+The following example assumes that you already have access to the encryption server, i.e., you have a valid api key,
+which in this case is 'API_TEST'.
 
 Calling processData():
 

@@ -4,7 +4,9 @@
 from ebclient.eb_consts import EBConsts
 from ebclient.crypto_util import *
 from ebclient.uo import UO
-from past.builtins import long
+if sys.version_info[0] > 2:
+    from past.builtins import long
+
 __author__ = 'Enigma Bridge Ltd'
 
 
@@ -133,7 +135,8 @@ class EBUtils(object):
                 elif dest[key] == variation[key]:
                     pass # same leaf value
                 else:
-                    raise ValueError('Conflict at %s' % '.'.join(path + [str(key)]))
+                    dest[key] = variation[key]
             else:
                 dest[key] = variation[key]
+
         return dest

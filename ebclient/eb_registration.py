@@ -138,7 +138,7 @@ class BaseRegistrationRequest(object):
         if self.api_data is not None:
             self.request.body['apidata'] = self.api_data
         if self.aux_data is not None:
-            if isinstance(self.aux_data, types.DictionaryType):
+            if isinstance(self.aux_data, dict):
                 self.request.body = EBUtils.merge(self.request.body, self.aux_data)
             else:
                 raise ValueError('Aux data has to be a dictionary')

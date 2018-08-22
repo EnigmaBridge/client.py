@@ -11,8 +11,11 @@ For now we use PyCrypto, later we may use pure python implementations to minimiz
 import logging
 import os
 import base64
-import types
 import struct
+import sys
+if sys.version_info[0] > 2:
+    from past.builtins import basestring
+    from past.builtins import long
 
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -45,7 +48,7 @@ def to_bytes(x, blocksize=0):
         return left_zero_pad(x, blocksize)
     elif isinstance(x, (list, tuple)):
         return left_zero_pad(''.join([bchr(y) for y in bytearray(x)]), blocksize)
-    elif isinstance(x, (types.LongType, types.IntType)):
+    elif isinstance(x, (long, int)):
         return long_to_bytes(x, blocksize)
     else:
         raise ValueError('Unknown input argument type')
@@ -57,9 +60,9 @@ def to_long(x):
     :param x:
     :return:
     """
-    if isinstance(x, types.LongType):
+    if isinstance(x, long):
         return x
-    elif isinstance(x, types.IntType):
+    elif isinstance(x, int):
         return long(x)
     else:
         return bytes_to_long(to_bytes(x))
@@ -86,9 +89,9 @@ def to_hex(x):
     :return:
     """
     if isinstance(x, bytearray):
-        return x.decode('hex')
-    elif isinstance(x, basestring):
-        return base64.b16encode(x)
+        x=bytes(x)
+    if isinstance(x, basestring):
+        return base64.b16encode(x).decode('ascii')
     elif isinstance(x, (list, tuple)):
         return bytearray(x).decode('hex')
     else:
@@ -153,7 +156,7 @@ def str_equals(a, b):
 def bytes_replace(byte_str, start_idx, stop_idx, replacement):
     """
     Replaces given portion of the byte string with the replacement, returns new array
-    :param bytes:
+    :param byte_str:
     :param start_idx:
     :param stop_idx:
     :param replacement:
@@ -166,7 +169,7 @@ def bytes_transform(byte_str, start_idx, stop_idx, fction):
     """
     Takes portion of the byte array and passes it to the function for transformation.
     Result is replaced in the byte string, new one is created.
-    :param bytes:
+    :param byte_str:
     :param start_idx:
     :param stop_idx:
     :param fction:

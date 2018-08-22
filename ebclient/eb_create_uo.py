@@ -63,23 +63,23 @@ class CreateUO:
         # Create template specifications, using local config and defaults.
         spec = CreateUO.get_template_request_spec(self.configuration)
         if self.tpl is not None:
-            if isinstance(self.tpl, types.DictionaryType):
+            if isinstance(self.tpl, dict):
                 spec = EBUtils.update(spec, self.tpl)
             else:
                 raise ValueError('Unknown tpl format')
 
         # Fetch template for new UO.
-        tpl_resp = CreateUO.template_request(configuration, spec)
+        tpl_resp = CreateUO.template_request(self.configuration, spec)
 
         # Process the template, fill in the keys, do the crypto
-        tpl_processor = TemplateProcessor(configuration=configuration, keys=self.keys, tpl_response=tpl_resp)
+        tpl_processor = TemplateProcessor(configuration=self.configuration, keys=self.keys, tpl_response=tpl_resp)
         tpl_req = tpl_processor.process()
 
         # Import the initialized UO
-        self.import_resp = CreateUO.import_object(configuration=configuration, tpl=tpl_req)
+        self.import_resp = CreateUO.import_object(configuration=self.configuration, tpl=tpl_req)
 
         # Build UO
-        uo = CreateUO.build_imported_object(configuration=configuration, tpl_import_req=tpl_req, import_resp=self.import_resp)
+        uo = CreateUO.build_imported_object(configuration=self.configuration, tpl_import_req=tpl_req, import_resp=self.import_resp)
         return uo
 
     def create_rsa(self, bits, configuration=None, tpl=None):
@@ -144,7 +144,7 @@ class CreateUO:
         src = None
         if isinstance(spec, Configuration):
             src = spec.create_tpl
-        elif isinstance(spec, types.DictType):
+        elif isinstance(spec, dict):
             src = spec
         else:
             raise ValueError('Unrecognized spec type')
