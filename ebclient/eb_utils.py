@@ -3,11 +3,11 @@
 
 import logging
 import types
-from eb_consts import EBConsts
+from ebclient.eb_consts import EBConsts
 from ebclient.crypto_util import *
-from uo import UO
-
-__author__ = 'dusanklinec'
+from ebclient.uo import UO
+from past.builtins import long
+__author__ = 'Enigma Bridge Ltd'
 
 
 logger = logging.getLogger(__name__)
@@ -67,7 +67,7 @@ class EBUtils(object):
         :return:
         """
         uo_type = None
-        if isinstance(type, (types.IntType, types.LongType)):
+        if isinstance(type, (int, long)):
             uo_type = int(type)
         elif isinstance(type, UO):
             uo_type = type.uo_type
@@ -114,3 +114,28 @@ class EBUtils(object):
                 a[key] = b[key]
         return a
 
+    @staticmethod
+    def update(dest, variation, path=None):
+        """
+        Deep merges dictionary object variation into dest, dest keys in variation will be assigned new values
+        from variation
+        :param dest:
+        :param variation:
+        :param path:
+        :return:
+        """
+        if dest is None: return None
+        if variation is None: return dest
+
+        if path is None: path = []
+        for key in variation:
+            if key in dest:
+                if isinstance(dest[key], dict) and isinstance(variation[key], dict):
+                    EBUtils.merge(dest[key], variation[key], path + [str(key)])
+                elif dest[key] == variation[key]:
+                    pass # same leaf value
+                else:
+                    raise ValueError('Conflict at %s' % '.'.join(path + [str(key)]))
+            else:
+                dest[key] = variation[key]
+        return dest

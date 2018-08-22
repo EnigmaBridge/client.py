@@ -62,7 +62,7 @@ class CreateUO:
         spec = CreateUO.get_template_request_spec(self.configuration)
         if self.tpl is not None:
             if isinstance(self.tpl, types.DictionaryType):
-                spec = EBUtils.merge(spec, self.tpl)
+                spec = EBUtils.update(spec, self.tpl)
             else:
                 raise ValueError('Unknown tpl format')
 
