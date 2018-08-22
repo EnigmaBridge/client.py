@@ -9,7 +9,6 @@ from ebclient.errors import *
 
 __author__ = 'Enigma Bridge Ltd'
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -77,9 +76,10 @@ class ProcessData(object):
         self.request.api_method = EBConsts.REQUEST_PROCESS_DATA
 
         # Build plaintext plain_buffer
-        plain_buffer = "\x1f%s%s%s" % (to_bytes(self.uo.uo_id, 4),
-                                       to_bytes(self.request.nonce, EBConsts.FRESHNESS_NONCE_LEN),
-                                       to_bytes(self.input_data))
+        plain_buffer = \
+            to_bytes(31, 1) + to_bytes(self.uo.uo_id, 4) + \
+            to_bytes(self.request.nonce, EBConsts.FRESHNESS_NONCE_LEN) + to_bytes(self.input_data)
+
         plain_buffer = PKCS7.pad(plain_buffer)
 
         # Encrypt-then-mac
@@ -87,7 +87,8 @@ class ProcessData(object):
         mac = cbc_mac(self.uo.mac_key, ciphertext)
 
         # Result request body
-        self.request.body = {"data":"Packet0_%s_0000%s" % (EBUtils.get_request_type(self.uo), to_hex(ciphertext + mac))}
+        self.request.body = {
+            "data": "Packet0_%s_0000%s" % (EBUtils.get_request_type(self.uo), to_hex(ciphertext + mac))}
         return self.request
 
     def decrypt_result(self, *args, **kwargs):
@@ -110,7 +111,7 @@ class ProcessData(object):
         # Strip out the plaintext part
         plain_length = bytes_to_long(from_hex(res_hex[0:4]))
         if plain_length > 0:
-            res_hex = res_hex[4+plain_length:]
+            res_hex = res_hex[4 + plain_length:]
         else:
             res_hex = res_hex[4:]
 
@@ -136,11 +137,11 @@ class ProcessData(object):
 
         # Decrypt
         decrypted = aes_dec(self.uo.enc_key, res_bytes)
-        if len(decrypted) < 1+4+8 or decrypted[0:1] != bchr(0xf1):
+        if len(decrypted) < 1 + 4 + 8 or decrypted[0:1] != bchr(0xf1):
             raise InvalidResponse('Invalid format')
 
         self.resp_object_id = bytes_to_long(decrypted[1:5])
-        self.resp_nonce = EBUtils.demangle_nonce(decrypted[5:5+EBConsts.FRESHNESS_NONCE_LEN])
-        self.decrypted = decrypted[5+EBConsts.FRESHNESS_NONCE_LEN:]
+        self.resp_nonce = EBUtils.demangle_nonce(decrypted[5:5 + EBConsts.FRESHNESS_NONCE_LEN])
+        self.decrypted = decrypted[5 + EBConsts.FRESHNESS_NONCE_LEN:]
         self.decrypted = PKCS7.unpad(self.decrypted)
         return self.response

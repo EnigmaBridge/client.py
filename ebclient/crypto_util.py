@@ -43,11 +43,11 @@ def to_bytes(x, blocksize=0):
     :return:
     """
     if isinstance(x, bytearray):
-        return left_zero_pad(''.join([bchr(y) for y in x]), blocksize)
+        return left_zero_pad(bytes(x), blocksize)
     elif isinstance(x, basestring):
         return left_zero_pad(x, blocksize)
     elif isinstance(x, (list, tuple)):
-        return left_zero_pad(''.join([bchr(y) for y in bytearray(x)]), blocksize)
+        return left_zero_pad(bytes(bytearray(x)), blocksize)
     elif isinstance(x, (long, int)):
         return long_to_bytes(x, blocksize)
     else:
@@ -89,11 +89,11 @@ def to_hex(x):
     :return:
     """
     if isinstance(x, bytearray):
-        x=bytes(x)
+        x = bytes(x)
+    elif isinstance(x, (list, tuple)):
+        x = bytes(bytearray(x))
     if isinstance(x, basestring):
         return base64.b16encode(x).decode('ascii')
-    elif isinstance(x, (list, tuple)):
-        return bytearray(x).decode('hex')
     else:
         raise ValueError('Unknown input argument type')
 
@@ -290,7 +290,7 @@ class PKCS7(Padding):
     @staticmethod
     def pad(data, *args, **kwargs):
         bs = kwargs.get('bs', 16)
-        return data + (bs - len(data) % bs) * chr(bs - len(data) % bs)
+        return data + (bs - len(data) % bs) * bytes(bytearray([bs - len(data) % bs]))
 
 
 class PKCS15(Padding):
